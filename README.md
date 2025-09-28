@@ -1,4 +1,4 @@
-# navi_go
+# NaviGo App
 
 A new Flutter project.
 
