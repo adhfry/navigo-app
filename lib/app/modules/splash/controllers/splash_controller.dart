@@ -1,9 +1,11 @@
 import 'package:get/get.dart';
+import 'package:navi_go/app/data/services/auth_service.dart';
 import 'package:navi_go/app/routes/app_pages.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashController extends GetxController {
   final RxDouble opacity = 0.0.obs;
+  final AuthService authService = Get.find();
 
   @override
   void onReady() {
@@ -33,8 +35,12 @@ class SplashController extends GetxController {
         // Jika ini pertama kali, arahkan ke halaman perkenalan
         Get.offAllNamed(Routes.GET_STARTED);
       } else {
-        // Jika tidak, langsung ke halaman login
-        Get.offAllNamed(Routes.LOGIN);
+        // Cek status login dari AuthService
+        if (authService.isLoggedIn.value) {
+          Get.offNamed(Routes.HOME);
+        } else {
+          Get.offNamed(Routes.LOGIN);
+        }
       }
     } catch (e) {
       // Jika terjadi error saat mengakses SharedPreferences,

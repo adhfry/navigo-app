@@ -1,9 +1,8 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
 import 'package:navi_go/app/config/theme.dart';
-
+import 'package:navi_go/app/data/services/auth_service.dart';
 import '../controllers/register_controller.dart';
 
 class RegisterView extends GetView<RegisterController> {
@@ -132,6 +131,35 @@ class RegisterView extends GetView<RegisterController> {
           ),
           const SizedBox(height: 20),
 
+          const Text('Nomor Telepon', style: TextStyle(fontWeight: FontWeight.w500)),
+          const SizedBox(height: 8),
+          TextFormField(
+            controller: controller.phoneController,
+            keyboardType: TextInputType.phone,
+            decoration: InputDecoration(
+              hintText: '081234567890',
+              prefixIcon: const Icon(Icons.phone_outlined, color: Colors.grey),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Colors.grey.shade300),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Colors.grey.shade300),
+              ),
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Nomor telepon tidak boleh kosong';
+              }
+              if (value.length < 10) {
+                return 'Nomor telepon minimal 10 karakter';
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 20),
+
           const Text('Password', style: TextStyle(fontWeight: FontWeight.w500)),
           const SizedBox(height: 8),
           Obx(
@@ -245,19 +273,21 @@ class RegisterView extends GetView<RegisterController> {
           SizedBox(
             width: double.infinity,
             child: Obx(
-              () => ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.primaryColor,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+              () {
+                final authService = Get.find<AuthService>();
+                return ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.primaryColor,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
-                ),
-                onPressed: controller.isLoading.value
-                    ? null
-                    : controller.register,
-                child: controller.isLoading.value
-                    ? const SizedBox(
+                  onPressed: authService.isLoading.value
+                      ? null
+                      : controller.register,
+                  child: authService.isLoading.value
+                      ? const SizedBox(
                         height: 24,
                         width: 24,
                         child: CircularProgressIndicator(
@@ -273,6 +303,49 @@ class RegisterView extends GetView<RegisterController> {
                           color: Colors.white,
                         ),
                       ),
+                );
+              },
+            ),
+          ),
+          const SizedBox(height: 24),
+
+          // Divider
+          Row(
+            children: [
+              Expanded(child: Divider(color: Colors.grey.shade300)),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: Text('Atau', style: TextStyle(color: Colors.grey)),
+              ),
+              Expanded(child: Divider(color: Colors.grey.shade300)),
+            ],
+          ),
+          const SizedBox(height: 24),
+
+          // Google Sign In Button
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                side: BorderSide(color: Colors.grey.shade300),
+              ),
+              onPressed: controller.registerWithGoogle,
+              icon: Image.asset(
+                'assets/images/google-logo.png',
+                height: 24,
+                width: 24,
+              ),
+              label: const Text(
+                'Daftar dengan Google',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                ),
               ),
             ),
           ),

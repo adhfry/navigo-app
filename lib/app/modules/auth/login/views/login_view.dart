@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
 import 'package:navi_go/app/config/theme.dart';
 import 'package:navi_go/app/routes/app_pages.dart';
-
+import 'package:navi_go/app/data/services/auth_service.dart';
 import '../controllers/login_controller.dart';
 
 class LoginView extends GetView<LoginController> {
@@ -152,32 +151,77 @@ class LoginView extends GetView<LoginController> {
           SizedBox(
             width: double.infinity,
             child: Obx(
-              () => ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.primaryColor,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+              () {
+                final authService = Get.find<AuthService>();
+                return ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.primaryColor,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
+                  onPressed: authService.isLoading.value ? null : controller.login,
+                  child: authService.isLoading.value
+                      ? const SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 3,
+                          ),
+                        )
+                      : const Text(
+                          'Masuk',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                );
+              },
+            ),
+          ),
+          const SizedBox(height: 24),
+
+          // Divider
+          Row(
+            children: [
+              Expanded(child: Divider(color: Colors.grey.shade300)),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: Text('Atau', style: TextStyle(color: Colors.grey)),
+              ),
+              Expanded(child: Divider(color: Colors.grey.shade300)),
+            ],
+          ),
+          const SizedBox(height: 24),
+
+          // Google Sign In Button
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                onPressed: controller.isLoading.value ? null : controller.login,
-                child: controller.isLoading.value
-                    ? const SizedBox(
-                        height: 24,
-                        width: 24,
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 3,
-                        ),
-                      )
-                    : const Text(
-                        'Masuk',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
+                side: BorderSide(color: Colors.grey.shade300),
+              ),
+              onPressed: controller.loginWithGoogle,
+              icon: Image.asset(
+                'assets/images/google-logo.png',
+                height: 24,
+                width: 24,
+              ),
+              label: const Text(
+                'Masuk dengan Google',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                ),
               ),
             ),
           ),
