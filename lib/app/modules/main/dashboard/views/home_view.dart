@@ -33,11 +33,29 @@ class HomeView extends GetView<DashboardController> {
           // Premium Header (Indosat-style)
           _buildPremiumHeader(),
           
-          // Content
+          // Content with Fade Transition
           SliverToBoxAdapter(
             child: Column(
               children: [
-                const SizedBox(height: 20),
+                // Fade Container for smooth transition
+                Container(
+                  height: 30,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        const Color(0xFF0c4a6e).withValues(alpha: 0.1),
+                        const Color(0xFFF1F5F9).withValues(alpha: 0),
+                      ],
+                    ),
+                  ),
+                ),
+                
+                // Carousel Promo Modern
+                _buildModernCarousel(),
+                
+                const SizedBox(height: 24),
                 
                 // Menu layanan horizontal
                 _buildServicesList(),
@@ -55,7 +73,7 @@ class HomeView extends GetView<DashboardController> {
   // Premium Header (Indosat-Style with NaviGo Colors)
   Widget _buildPremiumHeader() {
     return SliverAppBar(
-      expandedHeight: 320,
+      expandedHeight: 380,
       floating: false,
       pinned: true,
       backgroundColor: const Color(0xFF0c4a6e),
@@ -127,17 +145,22 @@ class HomeView extends GetView<DashboardController> {
                                 ),
                               ),
                               const SizedBox(height: 4),
-                              Obx(() => Text(
-                                controller.userName.value.isNotEmpty 
+                              Obx(() {
+                                final fullName = controller.userName.value.isNotEmpty 
                                     ? controller.userName.value 
-                                    : 'Guest',
-                                style: const TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              )),
+                                    : 'Guest';
+                                // Ambil nama depan saja
+                                final firstName = fullName.split(' ').first;
+                                return Text(
+                                  firstName,
+                                  style: const TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                );
+                              }),
                             ],
                           ),
                         ),
@@ -352,23 +375,23 @@ class HomeView extends GetView<DashboardController> {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF0c4a6e).withValues(alpha: 0.1),
+                      color: Colors.green.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Column(
                       children: [
                         const Icon(
                           Icons.waves,
-                          color: Color(0xFF0c4a6e),
+                          color: Colors.green,
                           size: 28,
                         ),
                         const SizedBox(height: 4),
-                        Text(
+                        const Text(
                           'Tenang',
                           style: TextStyle(
                             fontSize: 10,
                             fontWeight: FontWeight.w600,
-                            color: Colors.grey.shade700,
+                            color: Colors.green,
                           ),
                         ),
                       ],
@@ -376,7 +399,238 @@ class HomeView extends GetView<DashboardController> {
                   ),
                 ],
               ),
+              
+              const SizedBox(height: 16),
+              
+              // Button "Lihat Jadwal"
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    // TODO: Navigate to schedule page
+                    Get.snackbar(
+                      'Info',
+                      'Fitur jadwal akan segera hadir',
+                      snackPosition: SnackPosition.BOTTOM,
+                      backgroundColor: const Color(0xFF0c4a6e),
+                      colorText: Colors.white,
+                      margin: const EdgeInsets.all(16),
+                      borderRadius: 12,
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF0c4a6e),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.schedule, size: 18),
+                      SizedBox(width: 8),
+                      Text(
+                        'Lihat Jadwal',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ],
+          ),
+        ),
+      ],
+    );
+  }
+  
+  // Modern Carousel with Elevated Cards
+  Widget _buildModernCarousel() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Section Title
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Promo Spesial 🎉',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF0c4a6e),
+                ),
+              ),
+              TextButton(
+                onPressed: () {},
+                child: const Text(
+                  'Lihat Semua',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Color(0xFF0c4a6e),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        
+        const SizedBox(height: 12),
+        
+        // Carousel
+        CarouselSlider.builder(
+          itemCount: imgList.length,
+          itemBuilder: (context, index, realIndex) {
+            final url = imgList[index];
+            return Container(
+              margin: const EdgeInsets.symmetric(horizontal: 8),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.15),
+                    blurRadius: 15,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: Stack(
+                  children: [
+                    // Image
+                    CachedNetworkImage(
+                      imageUrl: url,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: 180,
+                      placeholder: (context, url) => Container(
+                        color: Colors.grey.shade200,
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            color: const Color(0xFF0c4a6e),
+                          ),
+                        ),
+                      ),
+                      errorWidget: (context, url, error) => Container(
+                        color: Colors.grey.shade300,
+                        child: const Center(
+                          child: Icon(Icons.error, color: Colors.red),
+                        ),
+                      ),
+                    ),
+                    
+                    // Gradient Overlay
+                    Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            Colors.black.withValues(alpha: 0.7),
+                          ],
+                        ),
+                      ),
+                    ),
+                    
+                    // Content Overlay
+                    Positioned(
+                      bottom: 16,
+                      left: 16,
+                      right: 16,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFFFDE59),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Text(
+                              'PROMO',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF0c4a6e),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          const Text(
+                            'Diskon 50% Tiket Kapal',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          const Text(
+                            'Berlaku hingga 31 Des 2025',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.white70,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+          options: CarouselOptions(
+            height: 180,
+            autoPlay: true,
+            autoPlayInterval: const Duration(seconds: 4),
+            autoPlayAnimationDuration: const Duration(milliseconds: 800),
+            autoPlayCurve: Curves.easeInOutCubic,
+            enlargeCenterPage: true,
+            enlargeFactor: 0.25,
+            viewportFraction: 0.85,
+            onPageChanged: (index, reason) {
+              controller.onCarouselPageChanged(index);
+            },
+          ),
+        ),
+        
+        const SizedBox(height: 16),
+        
+        // Carousel Indicators (Dots)
+        Obx(
+          () => Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: imgList.asMap().entries.map((entry) {
+              return AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                width: controller.currentCarouselPage.value == entry.key
+                    ? 24.0
+                    : 8.0,
+                height: 8.0,
+                margin: const EdgeInsets.symmetric(horizontal: 4.0),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(4),
+                  color: controller.currentCarouselPage.value == entry.key
+                      ? const Color(0xFF0c4a6e)
+                      : const Color(0xFF0c4a6e).withValues(alpha: 0.3),
+                ),
+              );
+            }).toList(),
           ),
         ),
       ],
