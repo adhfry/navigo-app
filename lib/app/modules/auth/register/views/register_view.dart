@@ -161,30 +161,131 @@ class RegisterView extends GetView<RegisterController> {
           const SizedBox(height: 20),
 
           const Text('Jenis Kelamin (Opsional)', style: TextStyle(fontWeight: FontWeight.w500)),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           Obx(
             () => Row(
               children: [
+                // Card Laki-laki
                 Expanded(
-                  child: RadioListTile<String>(
-                    contentPadding: EdgeInsets.zero,
-                    title: const Text('Laki-laki'),
-                    value: 'L',
-                    groupValue: controller.selectedGender.value,
-                    onChanged: (value) {
-                      controller.selectedGender.value = value!;
+                  child: GestureDetector(
+                    onTap: () {
+                      // Toggle: Jika sudah dipilih, clear selection
+                      if (controller.selectedGender.value == 'L') {
+                        controller.selectedGender.value = '';
+                      } else {
+                        controller.selectedGender.value = 'L';
+                      }
                     },
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: controller.selectedGender.value == 'L'
+                            ? const Color(0xFF1E88E5) // Biru lebih gelap saat dipilih
+                            : const Color(0xFFE3F2FD), // Biru muda
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: controller.selectedGender.value == 'L'
+                              ? const Color(0xFF1565C0)
+                              : Colors.blue.shade100,
+                          width: 2,
+                        ),
+                        boxShadow: controller.selectedGender.value == 'L'
+                            ? [
+                                BoxShadow(
+                                  color: Colors.blue.withOpacity(0.3),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ]
+                            : [],
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.male,
+                            color: controller.selectedGender.value == 'L'
+                                ? Colors.white
+                                : const Color(0xFF1976D2),
+                            size: 28,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Laki-laki',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: controller.selectedGender.value == 'L'
+                                  ? Colors.white
+                                  : const Color(0xFF1976D2),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
+                const SizedBox(width: 12),
+                // Card Perempuan
                 Expanded(
-                  child: RadioListTile<String>(
-                    contentPadding: EdgeInsets.zero,
-                    title: const Text('Perempuan'),
-                    value: 'P',
-                    groupValue: controller.selectedGender.value,
-                    onChanged: (value) {
-                      controller.selectedGender.value = value!;
+                  child: GestureDetector(
+                    onTap: () {
+                      // Toggle: Jika sudah dipilih, clear selection
+                      if (controller.selectedGender.value == 'P') {
+                        controller.selectedGender.value = '';
+                      } else {
+                        controller.selectedGender.value = 'P';
+                      }
                     },
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: controller.selectedGender.value == 'P'
+                            ? const Color(0xFFEC407A) // Pink lebih gelap saat dipilih
+                            : const Color(0xFFFCE4EC), // Pink muda
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: controller.selectedGender.value == 'P'
+                              ? const Color(0xFFD81B60)
+                              : Colors.pink.shade100,
+                          width: 2,
+                        ),
+                        boxShadow: controller.selectedGender.value == 'P'
+                            ? [
+                                BoxShadow(
+                                  color: Colors.pink.withOpacity(0.3),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ]
+                            : [],
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.female,
+                            color: controller.selectedGender.value == 'P'
+                                ? Colors.white
+                                : const Color(0xFFD81B60),
+                            size: 28,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Perempuan',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: controller.selectedGender.value == 'P'
+                                  ? Colors.white
+                                  : const Color(0xFFD81B60),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ],
