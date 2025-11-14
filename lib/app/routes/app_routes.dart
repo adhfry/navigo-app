@@ -28,6 +28,10 @@ abstract class Routes {
   static const DASHBOARD = dashboard;
   // ignore: constant_identifier_names
   static const SCHEDULE_SEARCH = scheduleSearch;
+  // ignore: constant_identifier_names
+  static const FORGOT_PASSWORD = forgotPassword;
+  // ignore: constant_identifier_names
+  static const COMPLETE_PROFILE = completeProfile;
 }
 
 abstract class _Paths {

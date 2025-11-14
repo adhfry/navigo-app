@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+// import 'package:google_sign_in/google_sign_in.dart' as google; // TODO: Uncomment when fixing Google Sign-In
 import '../../../../data/services/auth_service.dart';
 import '../../../../routes/app_pages.dart';
 
@@ -106,26 +106,34 @@ class RegisterController extends GetxController {
 
   // Register/Login dengan Google
   Future<void> registerWithGoogle() async {
+    // TODO: Implement Google Sign-In after fixing package issues
+    Get.snackbar(
+      "Coming Soon",
+      "Daftar dengan Google akan segera tersedia",
+      snackPosition: SnackPosition.TOP,
+      backgroundColor: Colors.orange,
+      colorText: Colors.white,
+      duration: const Duration(seconds: 2),
+    );
+    
+    /* Uncomment after fixing google_sign_in package issues
     try {
-      // Same flow as login - Google Sign-In handles both login & register
-      final googleSignIn = GoogleSignIn(
-        serverClientId: '241902729566-e8ln8cggeivfmp4aogk3f1au4bhs7rlb.apps.googleusercontent.com',
+      final google.GoogleSignIn googleSignIn = google.GoogleSignIn(
+        scopes: <String>['email', 'profile'],
       );
       
-      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+      final google.GoogleSignInAccount? googleUser = await googleSignIn.signIn();
       
-      // If user cancelled the sign-in, return silently
       if (googleUser == null) {
         return;
       }
       
-      // Show loading after user selects account
       Get.dialog(
         const Center(child: CircularProgressIndicator()),
         barrierDismissible: false,
       );
       
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final google.GoogleSignInAuthentication googleAuth = googleUser.authentication;
       
       if (googleAuth.idToken == null) {
         if (Get.isDialogOpen ?? false) Get.back();
@@ -143,7 +151,6 @@ class RegisterController extends GetxController {
         googleAuth.idToken!,
       );
       
-      // Close loading
       if (Get.isDialogOpen ?? false) Get.back();
 
       if (response.isSuccess && response.data != null) {
@@ -182,10 +189,8 @@ class RegisterController extends GetxController {
         );
       }
     } catch (e) {
-      // Close loading if still open
       if (Get.isDialogOpen ?? false) Get.back();
       
-      // Only show error if it's not a user cancellation
       if (!e.toString().contains('sign_in_canceled') && 
           !e.toString().contains('CANCELED') &&
           !e.toString().contains('cancelled')) {
@@ -199,5 +204,6 @@ class RegisterController extends GetxController {
         );
       }
     }
+    */
   }
 }
