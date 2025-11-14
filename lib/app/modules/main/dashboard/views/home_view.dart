@@ -122,8 +122,8 @@ class HomeView extends GetView<DashboardController> {
             begin: Alignment.bottomCenter,
             end: Alignment.topCenter,
             colors: [
-              const Color(0xFFF1F5F9).withOpacity(1),
-              const Color(0xFFF1F5F9).withOpacity(0),
+              const Color(0xFFF1F5F9).withValues(alpha: 1),
+              const Color(0xFFF1F5F9).withValues(alpha: 0),
             ],
           ),
         ),
@@ -148,7 +148,7 @@ class HomeView extends GetView<DashboardController> {
               margin: const EdgeInsets.symmetric(horizontal: 4.0),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(4),
-                color: Colors.white.withOpacity(
+                color: Colors.white.withValues(alpha: 
                   controller.currentCarouselPage.value == entry.key ? 0.9 : 0.4,
                 ),
               ),
@@ -169,7 +169,7 @@ class HomeView extends GetView<DashboardController> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -202,7 +202,7 @@ class HomeView extends GetView<DashboardController> {
                     SizedBox(height: 8),
                     DecoratedBox(
                       decoration: BoxDecoration(
-                        color: AppTheme.primaryColor.withOpacity(0.1),
+                        color: AppTheme.primaryColor.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.all(Radius.circular(20)),
                       ),
                       child: Padding(
@@ -305,7 +305,7 @@ class HomeView extends GetView<DashboardController> {
                   width: 56,
                   height: 56,
                   decoration: BoxDecoration(
-                    color: AppTheme.primaryColor.withOpacity(0.1),
+                    color: AppTheme.primaryColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Icon(
@@ -381,7 +381,7 @@ class HomeView extends GetView<DashboardController> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             spreadRadius: 1,
             blurRadius: 5,
           ),
@@ -483,3 +483,4 @@ class HomeView extends GetView<DashboardController> {
     );
   }
 }
+

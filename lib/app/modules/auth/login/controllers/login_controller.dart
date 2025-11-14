@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import '../../../../data/services/auth_service.dart';
 import '../../../../routes/app_pages.dart';
 
@@ -84,38 +85,104 @@ class LoginController extends GetxController {
   // Fungsi untuk login dengan Google
   Future<void> loginWithGoogle() async {
     try {
-      final response = await _authService.signInWithGoogle();
-
-      if (response.isSuccess) {
+      // Step 1: Initialize and Sign in with Google  
+      final googleSignIn = GoogleSignIn(
+        serverClientId: '241902729566-e8ln8cggeivfmp4aogk3f1au4bhs7rlb.apps.googleusercontent.com',
+      );
+      
+      // Sign in - this will show Google account picker
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+      
+      // If user cancelled the sign-in, return silently
+      if (googleUser == null) {
+        // User cancelled, do nothing
+        return;
+      }
+      
+      // Show loading after user selects account
+      Get.dialog(
+        const Center(child: CircularProgressIndicator()),
+        barrierDismissible: false,
+      );
+      
+      // Step 2: Get authentication details
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      
+      if (googleAuth.idToken == null) {
+        if (Get.isDialogOpen ?? false) Get.back();
         Get.snackbar(
-          "Login Berhasil",
-          "Berhasil login dengan Google!",
+          "Error",
+          "Gagal mendapatkan token dari Google",
           snackPosition: SnackPosition.TOP,
-          backgroundColor: Colors.green,
+          backgroundColor: Colors.red,
           colorText: Colors.white,
-          duration: const Duration(seconds: 2),
+          duration: const Duration(seconds: 3),
         );
+        return;
+      }
+      
+      // Step 3: Send idToken to backend
+      final response = await _authService.signInWithGoogle(
+        googleAuth.idToken!,
+      );
+      
+      // Close loading
+      if (Get.isDialogOpen ?? false) Get.back();
 
-        Get.offAllNamed(Routes.HOME);
+      if (response.isSuccess && response.data != null) {
+        final needsPhone = response.data!['needsPhone'] as bool? ?? false;
+        
+        if (needsPhone) {
+          // Navigate to complete profile
+          Get.toNamed(
+            Routes.COMPLETE_PROFILE,
+            arguments: {
+              'tempToken': response.data!['tempToken'],
+              'email': response.data!['email'],
+              'fullName': response.data!['fullName'],
+              'profilePictureUrl': response.data!['profilePictureUrl'],
+            },
+          );
+        } else {
+          // Login success
+          Get.snackbar(
+            "Login Berhasil",
+            "Selamat datang kembali!",
+            snackPosition: SnackPosition.TOP,
+            backgroundColor: Colors.green,
+            colorText: Colors.white,
+            duration: const Duration(seconds: 2),
+          );
+
+          Get.offAllNamed(Routes.HOME);
+        }
       } else {
         Get.snackbar(
           "Login Gagal",
           response.message,
           snackPosition: SnackPosition.TOP,
-          backgroundColor: Colors.orange,
+          backgroundColor: Colors.red,
           colorText: Colors.white,
           duration: const Duration(seconds: 3),
         );
       }
     } catch (e) {
-      Get.snackbar(
-        "Error",
-        "Terjadi kesalahan: ${e.toString()}",
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        duration: const Duration(seconds: 3),
-      );
+      // Close loading if still open
+      if (Get.isDialogOpen ?? false) Get.back();
+      
+      // Only show error if it's not a user cancellation
+      if (!e.toString().contains('sign_in_canceled') && 
+          !e.toString().contains('CANCELED') &&
+          !e.toString().contains('cancelled')) {
+        Get.snackbar(
+          "Error",
+          "Terjadi kesalahan saat login dengan Google",
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 3),
+        );
+      }
     }
   }
 }

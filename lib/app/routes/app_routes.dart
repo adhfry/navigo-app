@@ -3,20 +3,42 @@ part of 'app_pages.dart';
 
 abstract class Routes {
   Routes._();
-  static const HOME = _Paths.HOME;
-  static const SPLASH = _Paths.SPLASH;
-  static const GET_STARTED = _Paths.GET_STARTED;
-  static const REGISTER = _Paths.REGISTER;
-  static const LOGIN = _Paths.LOGIN;
-  static const DASHBOARD = _Paths.DASHBOARD;
+  static const home = _Paths.home;
+  static const splash = _Paths.splash;
+  static const getStarted = _Paths.getStarted;
+  static const register = _Paths.register;
+  static const login = _Paths.login;
+  static const dashboard = _Paths.dashboard;
+  static const scheduleSearch = _Paths.scheduleSearch;
+  static const forgotPassword = _Paths.forgotPassword;
+  static const completeProfile = _Paths.completeProfile;
+  
+  // Backward compatibility
+  // ignore: constant_identifier_names
+  static const HOME = home;
+  // ignore: constant_identifier_names
+  static const SPLASH = splash;
+  // ignore: constant_identifier_names
+  static const GET_STARTED = getStarted;
+  // ignore: constant_identifier_names
+  static const REGISTER = register;
+  // ignore: constant_identifier_names
+  static const LOGIN = login;
+  // ignore: constant_identifier_names
+  static const DASHBOARD = dashboard;
+  // ignore: constant_identifier_names
+  static const SCHEDULE_SEARCH = scheduleSearch;
 }
 
 abstract class _Paths {
   _Paths._();
-  static const HOME = '/home';
-  static const SPLASH = '/splash';
-  static const GET_STARTED = '/get-started';
-  static const REGISTER = '/register';
-  static const LOGIN = '/login';
-  static const DASHBOARD = '/dashboard';
+  static const home = '/home';
+  static const splash = '/splash';
+  static const getStarted = '/get-started';
+  static const register = '/register';
+  static const login = '/login';
+  static const dashboard = '/dashboard';
+  static const scheduleSearch = '/schedule-search';
+  static const forgotPassword = '/forgot-password';
+  static const completeProfile = '/complete-profile';
 }

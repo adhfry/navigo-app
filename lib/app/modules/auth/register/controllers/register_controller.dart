@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import '../../../../data/services/auth_service.dart';
 import '../../../../routes/app_pages.dart';
 
@@ -16,6 +17,7 @@ class RegisterController extends GetxController {
   final RxBool isPasswordHidden = true.obs;
   final RxBool isConfirmPasswordHidden = true.obs;
   final RxBool termsChecked = false.obs;
+  final RxString selectedGender = ''.obs; // 'L' untuk Laki-laki, 'P' untuk Perempuan
 
   @override
   void onInit() {
@@ -65,6 +67,7 @@ class RegisterController extends GetxController {
         email: emailController.text.trim(),
         password: passwordController.text,
         phoneNumber: phoneController.text.trim(),
+        gender: selectedGender.value.isEmpty ? null : selectedGender.value,
       );
 
       if (response.isSuccess) {
@@ -101,41 +104,100 @@ class RegisterController extends GetxController {
     }
   }
 
-  // Login dengan Google
+  // Register/Login dengan Google
   Future<void> registerWithGoogle() async {
     try {
-      final response = await _authService.signInWithGoogle();
-
-      if (response.isSuccess) {
+      // Same flow as login - Google Sign-In handles both login & register
+      final googleSignIn = GoogleSignIn(
+        serverClientId: '241902729566-e8ln8cggeivfmp4aogk3f1au4bhs7rlb.apps.googleusercontent.com',
+      );
+      
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+      
+      // If user cancelled the sign-in, return silently
+      if (googleUser == null) {
+        return;
+      }
+      
+      // Show loading after user selects account
+      Get.dialog(
+        const Center(child: CircularProgressIndicator()),
+        barrierDismissible: false,
+      );
+      
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      
+      if (googleAuth.idToken == null) {
+        if (Get.isDialogOpen ?? false) Get.back();
         Get.snackbar(
-          "Pendaftaran Berhasil",
-          "Berhasil mendaftar dengan Google!",
+          "Error",
+          "Gagal mendapatkan token dari Google",
           snackPosition: SnackPosition.TOP,
-          backgroundColor: Colors.green,
+          backgroundColor: Colors.red,
           colorText: Colors.white,
-          duration: const Duration(seconds: 2),
         );
+        return;
+      }
+      
+      final response = await _authService.signInWithGoogle(
+        googleAuth.idToken!,
+      );
+      
+      // Close loading
+      if (Get.isDialogOpen ?? false) Get.back();
 
-        Get.offAllNamed(Routes.HOME);
+      if (response.isSuccess && response.data != null) {
+        final needsPhone = response.data!['needsPhone'] as bool? ?? false;
+        
+        if (needsPhone) {
+          Get.toNamed(
+            Routes.COMPLETE_PROFILE,
+            arguments: {
+              'tempToken': response.data!['tempToken'],
+              'email': response.data!['email'],
+              'fullName': response.data!['fullName'],
+              'profilePictureUrl': response.data!['profilePictureUrl'],
+            },
+          );
+        } else {
+          Get.snackbar(
+            "Berhasil",
+            "Selamat datang!",
+            snackPosition: SnackPosition.TOP,
+            backgroundColor: Colors.green,
+            colorText: Colors.white,
+            duration: const Duration(seconds: 2),
+          );
+
+          Get.offAllNamed(Routes.HOME);
+        }
       } else {
         Get.snackbar(
-          "Pendaftaran Gagal",
+          "Gagal",
           response.message,
           snackPosition: SnackPosition.TOP,
-          backgroundColor: Colors.orange,
+          backgroundColor: Colors.red,
           colorText: Colors.white,
           duration: const Duration(seconds: 3),
         );
       }
     } catch (e) {
-      Get.snackbar(
-        "Error",
-        "Terjadi kesalahan: ${e.toString()}",
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        duration: const Duration(seconds: 3),
-      );
+      // Close loading if still open
+      if (Get.isDialogOpen ?? false) Get.back();
+      
+      // Only show error if it's not a user cancellation
+      if (!e.toString().contains('sign_in_canceled') && 
+          !e.toString().contains('CANCELED') &&
+          !e.toString().contains('cancelled')) {
+        Get.snackbar(
+          "Error",
+          "Terjadi kesalahan saat mendaftar dengan Google",
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 3),
+        );
+      }
     }
   }
 }

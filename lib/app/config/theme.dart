@@ -45,7 +45,7 @@ class AppTheme {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         textStyle: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 16),
         elevation: 2,
-        shadowColor: primaryColor.withOpacity(0.3),
+        shadowColor: primaryColor.withValues(alpha: 0.3),
       ),
     ),
 
@@ -62,7 +62,7 @@ class AppTheme {
         borderSide: const BorderSide(color: primaryColor, width: 2),
       ),
       labelStyle: const TextStyle(color: mutedTextColor),
-      hintStyle: TextStyle(color: mutedTextColor.withOpacity(0.7)),
+      hintStyle: TextStyle(color: mutedTextColor.withValues(alpha: 0.7)),
     ),
 
     // Tema untuk AppBar
@@ -82,12 +82,10 @@ class AppTheme {
       primary: primaryColor,
       secondary: secondaryColor,
       surface: surfaceColor,
-      background: backgroundColor,
       error: errorColor,
       onPrimary: Colors.white,
       onSecondary: textColor,
       onSurface: textColor,
-      onBackground: textColor,
       onError: Colors.white,
     ),
   );

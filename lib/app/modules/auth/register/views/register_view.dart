@@ -160,6 +160,38 @@ class RegisterView extends GetView<RegisterController> {
           ),
           const SizedBox(height: 20),
 
+          const Text('Jenis Kelamin (Opsional)', style: TextStyle(fontWeight: FontWeight.w500)),
+          const SizedBox(height: 8),
+          Obx(
+            () => Row(
+              children: [
+                Expanded(
+                  child: RadioListTile<String>(
+                    contentPadding: EdgeInsets.zero,
+                    title: const Text('Laki-laki'),
+                    value: 'L',
+                    groupValue: controller.selectedGender.value,
+                    onChanged: (value) {
+                      controller.selectedGender.value = value!;
+                    },
+                  ),
+                ),
+                Expanded(
+                  child: RadioListTile<String>(
+                    contentPadding: EdgeInsets.zero,
+                    title: const Text('Perempuan'),
+                    value: 'P',
+                    groupValue: controller.selectedGender.value,
+                    onChanged: (value) {
+                      controller.selectedGender.value = value!;
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+
           const Text('Password', style: TextStyle(fontWeight: FontWeight.w500)),
           const SizedBox(height: 8),
           Obx(

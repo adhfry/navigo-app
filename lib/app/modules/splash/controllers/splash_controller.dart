@@ -45,7 +45,6 @@ class SplashController extends GetxController {
     } catch (e) {
       // Jika terjadi error saat mengakses SharedPreferences,
       // arahkan ke halaman login sebagai fallback aman.
-      print("Error reading SharedPreferences: $e");
       Get.offAllNamed(Routes.LOGIN);
     }
   }

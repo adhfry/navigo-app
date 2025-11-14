@@ -1,3 +1,4 @@
+import 'dart:developer' as dev;
 import 'package:dio/dio.dart';
 import 'package:get/get.dart' hide Response;
 import 'package:get_storage/get_storage.dart';
@@ -25,11 +26,15 @@ class AuthService extends GetxService {
   }
 
   Future<void> _loadToken() async {
-    final savedToken = _storage.read('token');
-    if (savedToken != null) {
-      token.value = savedToken;
-      isLoggedIn.value = true;
-      await getCurrentUser();
+    try {
+      final savedToken = _storage.read<String?>('token');
+      if (savedToken != null && savedToken.isNotEmpty) {
+        token.value = savedToken;
+        isLoggedIn.value = true;
+        await getCurrentUser();
+      }
+    } catch (e) {
+      dev.log('Failed to load token', name: 'AuthService', error: e);
     }
   }
 
@@ -63,8 +68,8 @@ class AuthService extends GetxService {
       );
 
       final apiResponse = ApiResponse<LoginResponse>.fromJson(
-        response.data,
-        (json) => LoginResponse.fromJson(json),
+        response.data as Map<String, dynamic>,
+        (json) => LoginResponse.fromJson(json as Map<String, dynamic>),
       );
 
       if (apiResponse.isSuccess && apiResponse.data != null) {
@@ -74,15 +79,28 @@ class AuthService extends GetxService {
 
       return apiResponse;
     } on DioException catch (e) {
-      if (e.response != null) {
+      dev.log('Login failed', name: 'AuthService', error: e);
+      if (e.response?.data != null) {
+        final errorData = e.response!.data;
         return ApiResponse<LoginResponse>(
           status: 'error',
-          message: e.response?.data['message'] ?? 'Login gagal',
+          message: errorData is Map<String, dynamic>
+              ? (errorData['message'] as String? ?? 'Login gagal')
+              : 'Login gagal',
         );
       }
       return ApiResponse<LoginResponse>(
         status: 'error',
-        message: 'Terjadi kesalahan koneksi',
+        message: e.type == DioExceptionType.connectionTimeout ||
+                e.type == DioExceptionType.receiveTimeout
+            ? 'Koneksi timeout, periksa jaringan Anda'
+            : 'Terjadi kesalahan koneksi',
+      );
+    } catch (e) {
+      dev.log('Unexpected error during login', name: 'AuthService', error: e);
+      return ApiResponse<LoginResponse>(
+        status: 'error',
+        message: 'Terjadi kesalahan yang tidak diketahui',
       );
     } finally {
       isLoading.value = false;
@@ -95,23 +113,30 @@ class AuthService extends GetxService {
     required String email,
     required String password,
     required String phoneNumber,
+    String? gender,
   }) async {
     try {
       isLoading.value = true;
 
+      final Map<String, dynamic> data = {
+        'fullName': fullName,
+        'email': email,
+        'password': password,
+        'phoneNumber': phoneNumber,
+      };
+      
+      if (gender != null && gender.isNotEmpty) {
+        data['gender'] = gender;
+      }
+
       final response = await _apiClient.post(
         ApiConfig.register,
-        data: {
-          'fullName': fullName,
-          'email': email,
-          'password': password,
-          'phoneNumber': phoneNumber,
-        },
+        data: data,
       );
 
       final apiResponse = ApiResponse<RegisterResponse>.fromJson(
-        response.data,
-        (json) => RegisterResponse.fromJson(json),
+        response.data as Map<String, dynamic>,
+        (json) => RegisterResponse.fromJson(json as Map<String, dynamic>),
       );
 
       if (apiResponse.isSuccess && apiResponse.data != null) {
@@ -121,15 +146,32 @@ class AuthService extends GetxService {
 
       return apiResponse;
     } on DioException catch (e) {
-      if (e.response != null) {
+      dev.log('Register failed', name: 'AuthService', error: e);
+      if (e.response?.data != null) {
+        final errorData = e.response!.data;
         return ApiResponse<RegisterResponse>(
           status: 'error',
-          message: e.response?.data['message'] ?? 'Registrasi gagal',
+          message: errorData is Map<String, dynamic>
+              ? (errorData['message'] as String? ?? 'Registrasi gagal')
+              : 'Registrasi gagal',
         );
       }
       return ApiResponse<RegisterResponse>(
         status: 'error',
-        message: 'Terjadi kesalahan koneksi',
+        message: e.type == DioExceptionType.connectionTimeout ||
+                e.type == DioExceptionType.receiveTimeout
+            ? 'Koneksi timeout, periksa jaringan Anda'
+            : 'Terjadi kesalahan koneksi',
+      );
+    } catch (e) {
+      dev.log(
+        'Unexpected error during registration',
+        name: 'AuthService',
+        error: e,
+      );
+      return ApiResponse<RegisterResponse>(
+        status: 'error',
+        message: 'Terjadi kesalahan yang tidak diketahui',
       );
     } finally {
       isLoading.value = false;
@@ -142,15 +184,15 @@ class AuthService extends GetxService {
       final response = await _apiClient.get(ApiConfig.me);
 
       final apiResponse = ApiResponse<UserModel>.fromJson(
-        response.data,
-        (json) => UserModel.fromJson(json),
+        response.data as Map<String, dynamic>,
+        (json) => UserModel.fromJson(json as Map<String, dynamic>),
       );
 
       if (apiResponse.isSuccess && apiResponse.data != null) {
         currentUser.value = apiResponse.data;
       }
     } catch (e) {
-      print('❌ Get current user failed: $e');
+      dev.log('Failed to get current user', name: 'AuthService', error: e);
     }
   }
 
@@ -159,21 +201,176 @@ class AuthService extends GetxService {
     await clearToken();
   }
 
-  // Google Sign In (akan diimplementasikan setelah backend ready)
-  Future<ApiResponse<String>> signInWithGoogle() async {
+  // Forgot Password
+  Future<ApiResponse<String>> forgotPassword({
+    required String email,
+  }) async {
     try {
       isLoading.value = true;
 
-      // TODO: Implement Google Sign In API endpoint di backend
-      // Endpoint belum tersedia di backend
+      final response = await _apiClient.post(
+        '/auth/forgot-password',
+        data: {'email': email},
+      );
+
+      return ApiResponse<String>(
+        status: 'success',
+        message: response.data['message'] as String? ??
+            'Link reset password telah dikirim ke email Anda',
+      );
+    } on DioException catch (e) {
+      dev.log('Forgot password failed', name: 'AuthService', error: e);
+      if (e.response?.data != null) {
+        final errorData = e.response!.data;
+        return ApiResponse<String>(
+          status: 'error',
+          message: errorData is Map<String, dynamic>
+              ? (errorData['message'] as String? ??
+                  'Gagal mengirim email reset password')
+              : 'Gagal mengirim email reset password',
+        );
+      }
       return ApiResponse<String>(
         status: 'error',
-        message: 'Login dengan Google belum tersedia. Endpoint API belum diimplementasikan di backend.',
+        message: e.type == DioExceptionType.connectionTimeout ||
+                e.type == DioExceptionType.receiveTimeout
+            ? 'Koneksi timeout, periksa jaringan Anda'
+            : 'Terjadi kesalahan koneksi',
       );
     } catch (e) {
+      dev.log(
+        'Unexpected error sending forgot password',
+        name: 'AuthService',
+        error: e,
+      );
       return ApiResponse<String>(
         status: 'error',
-        message: 'Terjadi kesalahan saat login dengan Google: $e',
+        message: 'Terjadi kesalahan yang tidak diketahui',
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // Google Sign In
+  Future<ApiResponse<Map<String, dynamic>>> signInWithGoogle(
+      String idToken) async {
+    try {
+      isLoading.value = true;
+
+      final response = await _apiClient.post(
+        '/auth/google',
+        data: {'idToken': idToken},
+      );
+
+      final responseData = response.data as Map<String, dynamic>;
+      final data = responseData['data'] as Map<String, dynamic>?;
+
+      if (data == null) {
+        return ApiResponse<Map<String, dynamic>>(
+          status: 'error',
+          message: 'Invalid response from server',
+        );
+      }
+
+      // Check if needs phone
+      final needsPhone = data['needsPhone'] as bool? ?? false;
+
+      if (!needsPhone && data['access_token'] != null) {
+        // User exists, save token
+        await saveToken(data['access_token'] as String);
+        await getCurrentUser();
+      }
+
+      return ApiResponse<Map<String, dynamic>>(
+        status: 'success',
+        message: responseData['message'] as String? ?? 'Success',
+        data: data,
+      );
+    } on DioException catch (e) {
+      dev.log('Google sign in failed', name: 'AuthService', error: e);
+      if (e.response?.data != null) {
+        final errorData = e.response!.data;
+        return ApiResponse<Map<String, dynamic>>(
+          status: 'error',
+          message: errorData is Map<String, dynamic>
+              ? (errorData['message'] as String? ??
+                  'Login dengan Google gagal')
+              : 'Login dengan Google gagal',
+        );
+      }
+      return ApiResponse<Map<String, dynamic>>(
+        status: 'error',
+        message: e.type == DioExceptionType.connectionTimeout ||
+                e.type == DioExceptionType.receiveTimeout
+            ? 'Koneksi timeout, periksa jaringan Anda'
+            : 'Terjadi kesalahan koneksi',
+      );
+    } catch (e) {
+      dev.log(
+        'Unexpected error during Google sign in',
+        name: 'AuthService',
+        error: e,
+      );
+      return ApiResponse<Map<String, dynamic>>(
+        status: 'error',
+        message: 'Terjadi kesalahan yang tidak diketahui',
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // Complete Google Profile (add phone number)
+  Future<ApiResponse<UserModel>> completeGoogleProfile({
+    required String phoneNumber,
+  }) async {
+    try {
+      isLoading.value = true;
+
+      final response = await _apiClient.post(
+        '/auth/google/complete-profile',
+        data: {'phoneNumber': phoneNumber},
+      );
+
+      final apiResponse = ApiResponse<UserModel>.fromJson(
+        response.data as Map<String, dynamic>,
+        (json) => UserModel.fromJson(json as Map<String, dynamic>),
+      );
+
+      if (apiResponse.isSuccess && apiResponse.data != null) {
+        currentUser.value = apiResponse.data;
+      }
+
+      return apiResponse;
+    } on DioException catch (e) {
+      dev.log('Complete profile failed', name: 'AuthService', error: e);
+      if (e.response?.data != null) {
+        final errorData = e.response!.data;
+        return ApiResponse<UserModel>(
+          status: 'error',
+          message: errorData is Map<String, dynamic>
+              ? (errorData['message'] as String? ??
+                  'Gagal melengkapi profil')
+              : 'Gagal melengkapi profil',
+        );
+      }
+      return ApiResponse<UserModel>(
+        status: 'error',
+        message: e.type == DioExceptionType.connectionTimeout ||
+                e.type == DioExceptionType.receiveTimeout
+            ? 'Koneksi timeout, periksa jaringan Anda'
+            : 'Terjadi kesalahan koneksi',
+      );
+    } catch (e) {
+      dev.log(
+        'Unexpected error completing profile',
+        name: 'AuthService',
+        error: e,
+      );
+      return ApiResponse<UserModel>(
+        status: 'error',
+        message: 'Terjadi kesalahan yang tidak diketahui',
       );
     } finally {
       isLoading.value = false;

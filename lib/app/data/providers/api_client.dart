@@ -1,3 +1,4 @@
+import 'dart:developer' as dev;
 import 'package:dio/dio.dart';
 import 'package:get/get.dart' hide Response;
 import 'package:get_storage/get_storage.dart';
@@ -30,25 +31,39 @@ class ApiClient extends GetxService {
       InterceptorsWrapper(
         onRequest: (options, handler) async {
           // Add token if exists
-          final token = _storage.read('token');
-          if (token != null) {
+          final token = _storage.read<String?>('token');
+          if (token != null && token.isNotEmpty) {
             options.headers['Authorization'] = 'Bearer $token';
           }
 
-          print('🌐 Request: ${options.method} ${options.uri}');
-          print('📤 Data: ${options.data}');
+          dev.log(
+            '🌐 ${options.method} ${options.uri}',
+            name: 'API Request',
+          );
+          if (options.data != null) {
+            dev.log('📤 ${options.data}', name: 'Request Data');
+          }
 
           return handler.next(options);
         },
         onResponse: (response, handler) {
-          print('✅ Response: ${response.statusCode}');
-          print('📥 Data: ${response.data}');
+          dev.log(
+            '✅ ${response.statusCode} ${response.requestOptions.path}',
+            name: 'API Response',
+          );
           return handler.next(response);
         },
         onError: (error, handler) {
-          print('❌ Error: ${error.message}');
-          if (error.response != null) {
-            print('📥 Error Data: ${error.response?.data}');
+          dev.log(
+            '❌ ${error.message} - ${error.requestOptions.path}',
+            name: 'API Error',
+            error: error,
+          );
+          if (error.response?.data != null) {
+            dev.log(
+              '📥 ${error.response?.data}',
+              name: 'Error Data',
+            );
           }
           return handler.next(error);
         },

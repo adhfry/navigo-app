@@ -28,7 +28,7 @@ class GetStartedView extends GetView<GetStartedController> {
                   onPressed: controller.skip,
                   child: Text(
                     "Lewati",
-                    style: TextStyle(color: Colors.white.withOpacity(0.8)),
+                    style: TextStyle(color: Colors.white.withValues(alpha: 0.8)),
                   ),
                 ),
               ),
@@ -122,7 +122,7 @@ class GetStartedView extends GetView<GetStartedController> {
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 16,
-              color: Colors.white.withOpacity(0.8),
+              color: Colors.white.withValues(alpha: 0.8),
               height: 1.5,
             ),
           ),
@@ -141,9 +141,10 @@ class GetStartedView extends GetView<GetStartedController> {
       decoration: BoxDecoration(
         color: controller.currentPage.value == index
             ? AppTheme.secondaryColor
-            : Colors.white.withOpacity(0.5),
+            : Colors.white.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(5),
       ),
     );
   }
 }
+
