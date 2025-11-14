@@ -73,8 +73,8 @@ class CompleteProfileController extends GetxController {
           duration: const Duration(seconds: 2),
         );
         
-        // Navigate to home
-        Get.offAllNamed(Routes.HOME);
+        // Navigate to dashboard
+        Get.offAllNamed(Routes.DASHBOARD);
       } else {
         Get.snackbar(
           'Gagal',

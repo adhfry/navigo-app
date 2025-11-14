@@ -59,8 +59,8 @@ class LoginController extends GetxController {
           duration: const Duration(seconds: 2),
         );
 
-        // Navigate to home
-        Get.offAllNamed(Routes.HOME);
+        // Navigate to dashboard
+        Get.offAllNamed(Routes.DASHBOARD);
       } else {
         Get.snackbar(
           "Login Gagal",
@@ -182,7 +182,7 @@ class LoginController extends GetxController {
             duration: const Duration(seconds: 2),
           );
 
-          Get.offAllNamed(Routes.HOME);
+          Get.offAllNamed(Routes.DASHBOARD);
         }
       } else {
         Get.snackbar(

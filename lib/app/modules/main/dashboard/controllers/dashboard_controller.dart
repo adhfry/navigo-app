@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:navi_go/app/modules/main/dashboard/views/home_view.dart';
 import 'package:navi_go/app/modules/main/dashboard/views/activity_view.dart';
 import 'package:navi_go/app/modules/main/dashboard/views/message_view.dart';
-import 'package:navi_go/app/modules/main/dashboard/views/account_view.dart';
+import 'package:navi_go/app/modules/main/profile/views/profile_view.dart';
 
 class DashboardController extends GetxController {
   // REVISI: Menambahkan state untuk BottomNavigationBar
@@ -19,7 +19,7 @@ class DashboardController extends GetxController {
     const HomeView(),
     const ActivityView(),
     const MessageView(),
-    const AccountView(),
+    const ProfileView(),
   ];
 
   @override

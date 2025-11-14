@@ -4,10 +4,10 @@ import '../modules/auth/login/bindings/login_binding.dart';
 import '../modules/auth/login/views/login_view.dart';
 import '../modules/auth/register/bindings/register_binding.dart';
 import '../modules/auth/register/views/register_view.dart';
-import '../modules/home/bindings/home_binding.dart';
-import '../modules/home/views/home_view.dart';
 import '../modules/main/dashboard/bindings/dashboard_binding.dart';
 import '../modules/main/dashboard/views/dashboard_view.dart';
+import '../modules/main/profile/bindings/profile_binding.dart';
+import '../modules/main/profile/views/profile_view.dart';
 import '../modules/onboarding/get_started/bindings/get_started_binding.dart';
 import '../modules/onboarding/get_started/views/get_started_view.dart';
 import '../modules/auth/complete_profile/bindings/complete_profile_binding.dart';
@@ -28,11 +28,6 @@ class AppPages {
   static const INITIAL = Routes.splash;
 
   static final routes = [
-    GetPage(
-      name: _Paths.home,
-      page: () => const HomeView(),
-      binding: HomeBinding(),
-    ),
     GetPage(
       name: _Paths.splash,
       page: () => const SplashView(),
@@ -73,6 +68,11 @@ class AppPages {
       name: _Paths.completeProfile,
       page: () => const CompleteProfileView(),
       binding: CompleteProfileBinding(),
+    ),
+    GetPage(
+      name: _Paths.profile,
+      page: () => const ProfileView(),
+      binding: ProfileBinding(),
     ),
   ];
 }

@@ -81,8 +81,8 @@ class RegisterController extends GetxController {
           duration: const Duration(seconds: 2),
         );
 
-        // Navigate to home after successful registration
-        Get.offAllNamed(Routes.HOME);
+        // Navigate to dashboard after successful registration
+        Get.offAllNamed(Routes.DASHBOARD);
       } else {
         Get.snackbar(
           "Pendaftaran Gagal",
@@ -204,7 +204,7 @@ class RegisterController extends GetxController {
             duration: const Duration(seconds: 2),
           );
 
-          Get.offAllNamed(Routes.HOME);
+          Get.offAllNamed(Routes.DASHBOARD);
         }
       } else {
         Get.snackbar(

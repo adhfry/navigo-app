@@ -37,7 +37,7 @@ class SplashController extends GetxController {
       } else {
         // Cek status login dari AuthService
         if (authService.isLoggedIn.value) {
-          Get.offNamed(Routes.HOME);
+          Get.offNamed(Routes.DASHBOARD);
         } else {
           Get.offNamed(Routes.LOGIN);
         }
