@@ -344,86 +344,96 @@ class ProfileView extends GetView<ProfileController> {
                                 
                                 const SizedBox(height: 8),
                                 
-                                // Status Chips
+                                // Status Chips (Responsive)
                                 Row(
                                   children: [
                                     // Traveler Status
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 8,
-                                        vertical: 4,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: controller.user.value!.isTravelerVerified
-                                            ? Colors.green.withValues(alpha: 0.3)
-                                            : Colors.orange.withValues(alpha: 0.3),
-                                        borderRadius: BorderRadius.circular(12),
-                                        border: Border.all(
-                                          color: controller.user.value!.isTravelerVerified
-                                              ? Colors.green
-                                              : Colors.orange,
-                                          width: 1,
+                                    Flexible(
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 6,
+                                          vertical: 3,
                                         ),
-                                      ),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Icon(
-                                            controller.user.value!.isTravelerVerified
-                                                ? Icons.verified
-                                                : Icons.schedule,
-                                            size: 12,
-                                            color: Colors.white,
+                                        decoration: BoxDecoration(
+                                          color: controller.user.value!.isTravelerVerified
+                                              ? Colors.green.withValues(alpha: 0.3)
+                                              : Colors.orange.withValues(alpha: 0.3),
+                                          borderRadius: BorderRadius.circular(12),
+                                          border: Border.all(
+                                            color: controller.user.value!.isTravelerVerified
+                                                ? Colors.green
+                                                : Colors.orange,
+                                            width: 1,
                                           ),
-                                          const SizedBox(width: 4),
-                                          Text(
-                                            controller.user.value!.isTravelerVerified
-                                                ? 'Verified'
-                                                : 'Unverified',
-                                            style: const TextStyle(
-                                              fontSize: 11,
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(
+                                              controller.user.value!.isTravelerVerified
+                                                  ? Icons.verified
+                                                  : Icons.schedule,
+                                              size: 11,
                                               color: Colors.white,
-                                              fontWeight: FontWeight.w600,
                                             ),
-                                          ),
-                                        ],
+                                            const SizedBox(width: 3),
+                                            Flexible(
+                                              child: Text(
+                                                controller.user.value!.isTravelerVerified
+                                                    ? 'Verified'
+                                                    : 'Unverified',
+                                                style: const TextStyle(
+                                                  fontSize: 10,
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                     
-                                    const SizedBox(width: 8),
+                                    const SizedBox(width: 6),
                                     
                                     // Rating
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 8,
-                                        vertical: 4,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: Colors.amber.withValues(alpha: 0.3),
-                                        borderRadius: BorderRadius.circular(12),
-                                        border: Border.all(
-                                          color: Colors.amber,
-                                          width: 1,
+                                    Flexible(
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 6,
+                                          vertical: 3,
                                         ),
-                                      ),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          const Icon(
-                                            Icons.star,
-                                            size: 12,
-                                            color: Colors.white,
+                                        decoration: BoxDecoration(
+                                          color: Colors.amber.withValues(alpha: 0.3),
+                                          borderRadius: BorderRadius.circular(12),
+                                          border: Border.all(
+                                            color: Colors.amber,
+                                            width: 1,
                                           ),
-                                          const SizedBox(width: 4),
-                                          Text(
-                                            '${controller.user.value!.averageRating}',
-                                            style: const TextStyle(
-                                              fontSize: 11,
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            const Icon(
+                                              Icons.star,
+                                              size: 11,
                                               color: Colors.white,
-                                              fontWeight: FontWeight.w600,
                                             ),
-                                          ),
-                                        ],
+                                            const SizedBox(width: 3),
+                                            Flexible(
+                                              child: Text(
+                                                '${controller.user.value!.averageRating}',
+                                                style: const TextStyle(
+                                                  fontSize: 10,
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ],
