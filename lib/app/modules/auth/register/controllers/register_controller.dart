@@ -142,8 +142,16 @@ class RegisterController extends GetxController {
       
       if (Get.isDialogOpen ?? false) Get.back();
 
+      // Debug logging
+      print('🔍 Google Sign-In Response:');
+      print('   Status: ${response.status}');
+      print('   Success: ${response.isSuccess}');
+      print('   Data: ${response.data}');
+      print('   Message: ${response.message}');
+
       if (response.isSuccess && response.data != null) {
         final needsPhone = response.data!['needsPhone'] as bool? ?? false;
+        print('   Needs Phone: $needsPhone');
         
         if (needsPhone) {
           Get.toNamed(

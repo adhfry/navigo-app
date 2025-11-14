@@ -263,8 +263,12 @@ class AuthService extends GetxService {
         data: {'idToken': idToken},
       );
 
+      dev.log('Google Sign-In Raw Response: ${response.data}', name: 'AuthService');
+
       final responseData = response.data as Map<String, dynamic>;
       final data = responseData['data'] as Map<String, dynamic>?;
+
+      dev.log('Parsed data: $data', name: 'AuthService');
 
       if (data == null) {
         return ApiResponse<Map<String, dynamic>>(
@@ -276,8 +280,12 @@ class AuthService extends GetxService {
       // Check if needs phone
       final needsPhone = data['needsPhone'] as bool? ?? false;
 
+      dev.log('needsPhone: $needsPhone, access_token exists: ${data['access_token'] != null}', 
+        name: 'AuthService');
+
       if (!needsPhone && data['access_token'] != null) {
         // User exists, save token
+        dev.log('Saving token and getting user...', name: 'AuthService');
         await saveToken(data['access_token'] as String);
         await getCurrentUser();
       }
