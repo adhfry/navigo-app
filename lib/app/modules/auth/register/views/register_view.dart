@@ -178,7 +178,7 @@ class RegisterView extends GetView<RegisterController> {
                     },
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 200),
-                      padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
                       decoration: BoxDecoration(
                         color: controller.selectedGender.value == 'L'
                             ? const Color(0xFF1E88E5) // Biru lebih gelap saat dipilih
@@ -193,7 +193,7 @@ class RegisterView extends GetView<RegisterController> {
                         boxShadow: controller.selectedGender.value == 'L'
                             ? [
                                 BoxShadow(
-                                  color: Colors.blue.withOpacity(0.3),
+                                  color: Colors.blue.withValues(alpha: 0.3),
                                   blurRadius: 8,
                                   offset: const Offset(0, 4),
                                 ),
@@ -202,23 +202,27 @@ class RegisterView extends GetView<RegisterController> {
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(
                             Icons.male,
                             color: controller.selectedGender.value == 'L'
                                 ? Colors.white
                                 : const Color(0xFF1976D2),
-                            size: 28,
+                            size: 24,
                           ),
-                          const SizedBox(width: 8),
-                          Text(
-                            'Laki-laki',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: controller.selectedGender.value == 'L'
-                                  ? Colors.white
-                                  : const Color(0xFF1976D2),
+                          const SizedBox(width: 6),
+                          Flexible(
+                            child: Text(
+                              'Laki-laki',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: controller.selectedGender.value == 'L'
+                                    ? Colors.white
+                                    : const Color(0xFF1976D2),
+                              ),
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ],
@@ -240,7 +244,7 @@ class RegisterView extends GetView<RegisterController> {
                     },
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 200),
-                      padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
                       decoration: BoxDecoration(
                         color: controller.selectedGender.value == 'P'
                             ? const Color(0xFFEC407A) // Pink lebih gelap saat dipilih
@@ -255,7 +259,7 @@ class RegisterView extends GetView<RegisterController> {
                         boxShadow: controller.selectedGender.value == 'P'
                             ? [
                                 BoxShadow(
-                                  color: Colors.pink.withOpacity(0.3),
+                                  color: Colors.pink.withValues(alpha: 0.3),
                                   blurRadius: 8,
                                   offset: const Offset(0, 4),
                                 ),
@@ -264,23 +268,27 @@ class RegisterView extends GetView<RegisterController> {
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(
                             Icons.female,
                             color: controller.selectedGender.value == 'P'
                                 ? Colors.white
                                 : const Color(0xFFD81B60),
-                            size: 28,
+                            size: 24,
                           ),
-                          const SizedBox(width: 8),
-                          Text(
-                            'Perempuan',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: controller.selectedGender.value == 'P'
-                                  ? Colors.white
-                                  : const Color(0xFFD81B60),
+                          const SizedBox(width: 6),
+                          Flexible(
+                            child: Text(
+                              'Perempuan',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: controller.selectedGender.value == 'P'
+                                    ? Colors.white
+                                    : const Color(0xFFD81B60),
+                              ),
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ],
