@@ -50,32 +50,32 @@ class ProfileView extends GetView<ProfileController> {
     );
   }
 
-  // Premium Header with Gradient Banner (Indosat-style)
+  // Premium Header with Gradient Banner (NaviGo Theme)
   Widget _buildHeader(BuildContext context) {
     return SliverAppBar(
       expandedHeight: 280,
       floating: false,
       pinned: true,
-      backgroundColor: const Color(0xFF6366F1),
+      backgroundColor: const Color(0xFF0c4a6e), // Navy Blue
       flexibleSpace: FlexibleSpaceBar(
         background: Stack(
           children: [
-            // Gradient Background
+            // Gradient Background (Navy Blue → Lighter Blue with Gold accent)
             Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    const Color(0xFF6366F1), // Indigo
-                    const Color(0xFF8B5CF6), // Purple  
-                    const Color(0xFFA855F7).withValues(alpha: 0.8), // Purple-400
+                    const Color(0xFF0c4a6e), // Navy Blue (Primary)
+                    const Color(0xFF0e5a8a), // Medium Blue
+                    const Color(0xFF1e7fb8).withValues(alpha: 0.9), // Lighter Blue
                   ],
                 ),
               ),
             ),
             
-            // Decorative Circles
+            // Gold Accent Decorative Circles
             Positioned(
               top: -50,
               right: -50,
@@ -84,7 +84,7 @@ class ProfileView extends GetView<ProfileController> {
                 height: 200,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white.withValues(alpha: 0.1),
+                  color: const Color(0xFFFFDE59).withValues(alpha: 0.1), // Gold
                 ),
               ),
             ),
@@ -96,7 +96,19 @@ class ProfileView extends GetView<ProfileController> {
                 height: 100,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white.withValues(alpha: 0.05),
+                  color: const Color(0xFFFFDE59).withValues(alpha: 0.08), // Gold
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: 20,
+              right: 30,
+              child: Container(
+                width: 60,
+                height: 60,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: const Color(0xFFFFDE59).withValues(alpha: 0.12), // Gold
                 ),
               ),
             ),
