@@ -28,54 +28,356 @@ class HomeView extends GetView<DashboardController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF1F5F9), // slate-100
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0.5,
-        title: _buildSearchAndNotification(),
+      body: CustomScrollView(
+        slivers: [
+          // Premium Header (Indosat-style)
+          _buildPremiumHeader(),
+          
+          // Content
+          SliverToBoxAdapter(
+            child: Column(
+              children: [
+                const SizedBox(height: 20),
+                
+                // Menu layanan horizontal
+                _buildServicesList(),
+
+                // Daftar Jastip
+                _buildRecentJastipSection(),
+              ],
+            ),
+          ),
+        ],
       ),
-      // REVISI: Menggunakan SingleChildScrollView untuk seluruh halaman
-      body: SingleChildScrollView(
-        child: Column(
+    );
+  }
+
+  // Premium Header (Indosat-Style with NaviGo Colors)
+  Widget _buildPremiumHeader() {
+    return SliverAppBar(
+      expandedHeight: 320,
+      floating: false,
+      pinned: true,
+      backgroundColor: const Color(0xFF0c4a6e),
+      flexibleSpace: FlexibleSpaceBar(
+        background: Stack(
           children: [
-            // REVISI: Menggunakan Stack untuk header
-            _buildHeaderStack(context),
-
-            // REVISI: SizedBox untuk memberi ruang bagi card yang overlap
-            const SizedBox(height: 170), // (Tinggi card 210 - 40 overlap)
-            // REVISI: Menu layanan horizontal
-            _buildServicesList(),
-
-            // REVISI: Daftar Jastip (dipindahkan ke fungsi terpisah)
-            _buildRecentJastipSection(),
+            // Gradient Background
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    const Color(0xFF0c4a6e), // Navy Blue
+                    const Color(0xFF0e5a8a), // Medium Blue
+                    const Color(0xFF1e7fb8), // Light Blue
+                  ],
+                ),
+              ),
+            ),
+            
+            // Gold Decorative Circles
+            Positioned(
+              top: -50,
+              right: -50,
+              child: Container(
+                width: 200,
+                height: 200,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: const Color(0xFFFFDE59).withValues(alpha: 0.1),
+                ),
+              ),
+            ),
+            Positioned(
+              top: 80,
+              left: -30,
+              child: Container(
+                width: 120,
+                height: 120,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: const Color(0xFFFFDE59).withValues(alpha: 0.08),
+                ),
+              ),
+            ),
+            
+            // Content
+            SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Top Bar
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // Welcome Text
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Halo, Traveler! 👋',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.white.withValues(alpha: 0.9),
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Obx(() => Text(
+                                controller.userName.value.isNotEmpty 
+                                    ? controller.userName.value 
+                                    : 'Guest',
+                                style: const TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              )),
+                            ],
+                          ),
+                        ),
+                        
+                        // Notification & Help
+                        Row(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.2),
+                                shape: BoxShape.circle,
+                              ),
+                              child: IconButton(
+                                onPressed: () {},
+                                icon: Stack(
+                                  children: [
+                                    const Icon(
+                                      Icons.notifications_outlined,
+                                      color: Colors.white,
+                                    ),
+                                    Positioned(
+                                      top: 0,
+                                      right: 0,
+                                      child: Container(
+                                        width: 8,
+                                        height: 8,
+                                        decoration: const BoxDecoration(
+                                          color: Colors.red,
+                                          shape: BoxShape.circle,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    
+                    const SizedBox(height: 24),
+                    
+                    // Search Bar
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.1),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: TextField(
+                        decoration: InputDecoration(
+                          hintText: 'Cari tiket, jastip, atau traveler...',
+                          hintStyle: TextStyle(
+                            color: Colors.grey.shade400,
+                            fontSize: 14,
+                          ),
+                          prefixIcon: Icon(
+                            Icons.search,
+                            color: Colors.grey.shade400,
+                          ),
+                          border: InputBorder.none,
+                          contentPadding: const EdgeInsets.symmetric(vertical: 16),
+                        ),
+                      ),
+                    ),
+                    
+                    const Spacer(),
+                    
+                    // Stacked Cards (Perjalanan Berikutnya)
+                    _buildStackedTripCards(),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
-
-  // --- WIDGET BARU: Header Stack (Carousel + Card) ---
-  Widget _buildHeaderStack(BuildContext context) {
+  
+  // Stacked Cards Effect
+  Widget _buildStackedTripCards() {
     return Stack(
-      // Izinkan card meluap ke bawah
       clipBehavior: Clip.none,
-      alignment: Alignment.topCenter,
       children: [
-        // 1. Carousel
-        _buildPromoCarousel(),
-
-        // 2. Gradien Fade di bawah carousel
-        _buildCarouselFade(),
-
-        // 3. Indikator Dots
-        _buildCarouselDots(),
-
-        // 4. Kartu Info Cerdas (Diposisikan tumpang tindih)
+        // Back Card (Shadow/Stack effect) - Shifted right
         Positioned(
-          // (Tinggi Carousel 220 - 40 overlap)
-          top: 180,
-          left: 16,
-          right: 16,
-          child: _buildSmartInfoCard(),
+          right: -8,
+          top: 8,
+          child: Container(
+            width: Get.width - 60,
+            height: 130,
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.5),
+                width: 1,
+              ),
+            ),
+          ),
+        ),
+        
+        // Middle Card - Slightly shifted
+        Positioned(
+          right: -4,
+          top: 4,
+          child: Container(
+            width: Get.width - 50,
+            height: 130,
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.7),
+                width: 1,
+              ),
+            ),
+          ),
+        ),
+        
+        // Front Card (Main Content)
+        Container(
+          width: Get.width - 40,
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.15),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Trip Info
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Perjalanan Berikutnya',
+                          style: TextStyle(
+                            color: Colors.grey.shade600,
+                            fontSize: 12,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        const Text(
+                          'Sumenep → Kangean',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF0c4a6e),
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFFDE59).withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: const Color(0xFFFFDE59),
+                              width: 1,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(
+                                Icons.calendar_today,
+                                size: 12,
+                                color: Color(0xFF0c4a6e),
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                '29 Sep 2025, 09:00',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                  color: const Color(0xFF0c4a6e),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  
+                  // Weather Icon
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF0c4a6e).withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Column(
+                      children: [
+                        const Icon(
+                          Icons.waves,
+                          color: Color(0xFF0c4a6e),
+                          size: 28,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Tenang',
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.grey.shade700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ],
     );
