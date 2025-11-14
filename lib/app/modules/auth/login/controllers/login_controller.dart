@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-// import 'package:google_sign_in/google_sign_in.dart' as google; // TODO: Uncomment when fixing Google Sign-In
+import 'package:google_sign_in/google_sign_in.dart' as google;
 import '../../../../data/services/auth_service.dart';
 import '../../../../routes/app_pages.dart';
 
@@ -84,17 +84,6 @@ class LoginController extends GetxController {
 
   // Fungsi untuk login dengan Google
   Future<void> loginWithGoogle() async {
-    // TODO: Implement Google Sign-In after fixing package issues
-    Get.snackbar(
-      "Coming Soon",
-      "Login dengan Google akan segera tersedia",
-      snackPosition: SnackPosition.TOP,
-      backgroundColor: Colors.orange,
-      colorText: Colors.white,
-      duration: const Duration(seconds: 2),
-    );
-    
-    /* Uncomment after fixing google_sign_in package issues
     try {
       final google.GoogleSignIn googleSignIn = google.GoogleSignIn(
         scopes: <String>['email', 'profile'],
@@ -102,16 +91,18 @@ class LoginController extends GetxController {
       
       final google.GoogleSignInAccount? googleUser = await googleSignIn.signIn();
       
+      // User cancelled the sign-in - silently return without error
       if (googleUser == null) {
         return;
       }
       
+      // Show loading dialog
       Get.dialog(
         const Center(child: CircularProgressIndicator()),
         barrierDismissible: false,
       );
       
-      final google.GoogleSignInAuthentication googleAuth = googleUser.authentication;
+      final google.GoogleSignInAuthentication googleAuth = await googleUser.authentication;
       
       if (googleAuth.idToken == null) {
         if (Get.isDialogOpen ?? false) Get.back();
@@ -167,12 +158,32 @@ class LoginController extends GetxController {
           duration: const Duration(seconds: 3),
         );
       }
+    } on google.PlatformException catch (e) {
+      // Handle Google Sign-In specific errors
+      if (Get.isDialogOpen ?? false) Get.back();
+      
+      // Only show error if it's not a user cancellation
+      if (e.code != 'sign_in_canceled' && 
+          e.code != 'popup_closed_by_user' &&
+          e.code != 'network_error') {
+        Get.snackbar(
+          "Error",
+          "Terjadi kesalahan saat login dengan Google",
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 3),
+        );
+      }
     } catch (e) {
       if (Get.isDialogOpen ?? false) Get.back();
       
-      if (!e.toString().contains('sign_in_canceled') && 
-          !e.toString().contains('CANCELED') &&
-          !e.toString().contains('cancelled')) {
+      // Check if error is user cancellation - silently ignore
+      final errorString = e.toString().toLowerCase();
+      if (!errorString.contains('sign_in_canceled') && 
+          !errorString.contains('canceled') &&
+          !errorString.contains('cancelled') &&
+          !errorString.contains('popup_closed')) {
         Get.snackbar(
           "Error",
           "Terjadi kesalahan saat login dengan Google",
@@ -183,6 +194,5 @@ class LoginController extends GetxController {
         );
       }
     }
-    */
   }
 }
