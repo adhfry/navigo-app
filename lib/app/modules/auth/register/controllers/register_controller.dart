@@ -131,9 +131,16 @@ class RegisterController extends GetxController {
       // If lightweight fails or returns null, do full authentication
       if (googleUser == null) {
         print('🔍 Lightweight auth failed, starting full authentication...');
-        googleUser = await googleSignIn.authenticate(
-          scopeHint: ['email', 'profile'],
-        );
+        try {
+          googleUser = await googleSignIn.authenticate(
+            scopeHint: ['email', 'profile'],
+          );
+          print('🔍 Authenticate succeeded!');
+        } catch (authError) {
+          print('❌ Authenticate failed: $authError');
+          // User cancelled or error occurred
+          return;
+        }
       }
       
       print('🔍 Google User authenticated: ${googleUser.email}');
@@ -144,6 +151,7 @@ class RegisterController extends GetxController {
         barrierDismissible: false,
       );
       
+      print('🔍 Getting authentication token...');
       final GoogleSignInAuthentication googleAuth = googleUser.authentication;
       
       if (googleAuth.idToken == null) {
