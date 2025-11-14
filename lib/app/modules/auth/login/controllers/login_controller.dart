@@ -85,13 +85,29 @@ class LoginController extends GetxController {
 
   // Fungsi untuk login dengan Google
   Future<void> loginWithGoogle() async {
+    GoogleSignInAccount? googleUser;
+    
     try {
+      print('🔍 Starting Google Sign-In...');
+      
       final googleSignIn = GoogleSignIn.instance;
       await googleSignIn.initialize();
       
-      final GoogleSignInAccount googleUser = await googleSignIn.authenticate(
-        scopeHint: ['email', 'profile'],
-      );
+      // Attempt lightweight authentication first
+      final lightweightAuth = googleSignIn.attemptLightweightAuthentication();
+      if (lightweightAuth != null) {
+        googleUser = await lightweightAuth;
+      }
+      
+      // If lightweight fails or returns null, do full authentication
+      if (googleUser == null) {
+        print('🔍 Lightweight auth failed, starting full authentication...');
+        googleUser = await googleSignIn.authenticate(
+          scopeHint: ['email', 'profile'],
+        );
+      }
+      
+      print('🔍 Google User authenticated: ${googleUser.email}');
       
       // Show loading dialog
       Get.dialog(
