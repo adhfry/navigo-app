@@ -33,19 +33,66 @@ class CompleteProfileController extends GetxController {
   Future<void> completeProfile() async {
     if (!formKey.currentState!.validate()) return;
     if (email == null || fullName == null) {
-      Get.snackbar('Error', 'Data tidak lengkap');
+      Get.snackbar(
+        'Error',
+        'Data tidak lengkap',
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
       return;
     }
     try {
       isLoading.value = true;
+      
+      print('🔍 Completing Profile:');
+      print('   Email: $email');
+      print('   Full Name: $fullName');
+      print('   Phone: ${phoneController.text.trim()}');
+      print('   Profile Picture: $profilePictureUrl');
+      
       final response = await _authService.completeGoogleProfile(
         phoneNumber: phoneController.text.trim(),
+        email: email!,
+        fullName: fullName!,
+        profilePictureUrl: profilePictureUrl,
       );
+      
+      print('🔍 Complete Profile Response:');
+      print('   Status: ${response.status}');
+      print('   Success: ${response.isSuccess}');
+      print('   Data: ${response.data}');
+      
       if (response.isSuccess) {
-        Get.snackbar('Berhasil', 'Profil berhasil dilengkapi!',
-          backgroundColor: Colors.green, colorText: Colors.white);
-        Get.offAllNamed(Routes.dashboard);
+        Get.snackbar(
+          'Berhasil',
+          'Selamat datang di NaviGo!',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 2),
+        );
+        
+        // Navigate to home
+        Get.offAllNamed(Routes.HOME);
+      } else {
+        Get.snackbar(
+          'Gagal',
+          response.message,
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
       }
+    } catch (e) {
+      print('❌ Error completing profile: $e');
+      Get.snackbar(
+        'Error',
+        'Terjadi kesalahan: ${e.toString()}',
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     } finally {
       isLoading.value = false;
     }

@@ -330,32 +330,46 @@ class AuthService extends GetxService {
   }
 
   // Complete Google Profile (add phone number)
-  Future<ApiResponse<UserModel>> completeGoogleProfile({
+  Future<ApiResponse<Map<String, dynamic>>> completeGoogleProfile({
     required String phoneNumber,
+    required String email,
+    required String fullName,
+    String? profilePictureUrl,
   }) async {
     try {
       isLoading.value = true;
 
       final response = await _apiClient.post(
         '/auth/google/complete-profile',
-        data: {'phoneNumber': phoneNumber},
+        data: {
+          'phoneNumber': phoneNumber,
+          'email': email,
+          'fullName': fullName,
+          'profilePictureUrl': profilePictureUrl,
+        },
       );
 
-      final apiResponse = ApiResponse<UserModel>.fromJson(
-        response.data as Map<String, dynamic>,
-        (json) => UserModel.fromJson(json as Map<String, dynamic>),
-      );
+      dev.log('Complete Profile Response: ${response.data}', name: 'AuthService');
 
-      if (apiResponse.isSuccess && apiResponse.data != null) {
-        currentUser.value = apiResponse.data;
+      final responseData = response.data as Map<String, dynamic>;
+      final data = responseData['data'] as Map<String, dynamic>?;
+
+      if (data != null && data['access_token'] != null) {
+        // Save token and get user
+        await saveToken(data['access_token'] as String);
+        await getCurrentUser();
       }
 
-      return apiResponse;
+      return ApiResponse<Map<String, dynamic>>(
+        status: 'success',
+        message: responseData['message'] as String? ?? 'Profile completed successfully',
+        data: data,
+      );
     } on DioException catch (e) {
       dev.log('Complete profile failed', name: 'AuthService', error: e);
       if (e.response?.data != null) {
         final errorData = e.response!.data;
-        return ApiResponse<UserModel>(
+        return ApiResponse<Map<String, dynamic>>(
           status: 'error',
           message: errorData is Map<String, dynamic>
               ? (errorData['message'] as String? ??
@@ -363,7 +377,7 @@ class AuthService extends GetxService {
               : 'Gagal melengkapi profil',
         );
       }
-      return ApiResponse<UserModel>(
+      return ApiResponse<Map<String, dynamic>>(
         status: 'error',
         message: e.type == DioExceptionType.connectionTimeout ||
                 e.type == DioExceptionType.receiveTimeout
@@ -376,7 +390,7 @@ class AuthService extends GetxService {
         name: 'AuthService',
         error: e,
       );
-      return ApiResponse<UserModel>(
+      return ApiResponse<Map<String, dynamic>>(
         status: 'error',
         message: 'Terjadi kesalahan yang tidak diketahui',
       );
