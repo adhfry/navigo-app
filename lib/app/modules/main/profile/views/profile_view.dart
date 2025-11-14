@@ -50,134 +50,401 @@ class ProfileView extends GetView<ProfileController> {
     );
   }
 
-  // Premium Header with Gradient Banner
+  // Premium Header with Gradient Banner (Indosat-style)
   Widget _buildHeader(BuildContext context) {
     return SliverAppBar(
-      expandedHeight: 200,
+      expandedHeight: 280,
       floating: false,
       pinned: true,
+      backgroundColor: const Color(0xFF6366F1),
       flexibleSpace: FlexibleSpaceBar(
-        background: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Color(0xFF6366F1), // Indigo
-                Color(0xFF8B5CF6), // Purple  
-                Color(0xFFA855F7), // Purple-400
-              ],
+        background: Stack(
+          children: [
+            // Gradient Background
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    const Color(0xFF6366F1), // Indigo
+                    const Color(0xFF8B5CF6), // Purple  
+                    const Color(0xFFA855F7).withValues(alpha: 0.8), // Purple-400
+                  ],
+                ),
+              ),
             ),
-          ),
-          child: SafeArea(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SizedBox(height: 40),
-                
-                // Profile Picture with Border
-                Stack(
+            
+            // Decorative Circles
+            Positioned(
+              top: -50,
+              right: -50,
+              child: Container(
+                width: 200,
+                height: 200,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white.withValues(alpha: 0.1),
+                ),
+              ),
+            ),
+            Positioned(
+              top: 100,
+              left: -30,
+              child: Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white.withValues(alpha: 0.05),
+                ),
+              ),
+            ),
+            
+            // Content
+            SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: Colors.white,
-                          width: 3,
+                    // Top Bar
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // Logo/Title
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.2),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Icon(
+                                Icons.account_circle,
+                                color: Colors.white,
+                                size: 24,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            const Text(
+                              'Profil Saya',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
                         ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.2),
-                            blurRadius: 12,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: CircleAvatar(
-                        radius: 50,
-                        backgroundColor: Colors.white,
-                        backgroundImage: controller.user.value!.profilePictureUrl != null
-                            ? NetworkImage(controller.user.value!.profilePictureUrl!)
-                            : null,
-                        child: controller.user.value!.profilePictureUrl == null
-                            ? Text(
-                                controller.user.value!.fullName[0].toUpperCase(),
-                                style: const TextStyle(
-                                  fontSize: 40,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFF6366F1),
+                        
+                        // Action Buttons
+                        Row(
+                          children: [
+                            // Notification Button
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.2),
+                                shape: BoxShape.circle,
+                              ),
+                              child: IconButton(
+                                onPressed: () {
+                                  // TODO: Navigate to notifications
+                                },
+                                icon: Stack(
+                                  children: [
+                                    const Icon(
+                                      Icons.notifications_outlined,
+                                      color: Colors.white,
+                                    ),
+                                    // Notification Badge
+                                    Positioned(
+                                      top: 0,
+                                      right: 0,
+                                      child: Container(
+                                        width: 8,
+                                        height: 8,
+                                        decoration: const BoxDecoration(
+                                          color: Colors.red,
+                                          shape: BoxShape.circle,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              )
-                            : null,
-                      ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            
+                            // Help Button
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.2),
+                                shape: BoxShape.circle,
+                              ),
+                              child: IconButton(
+                                onPressed: () {
+                                  // TODO: Navigate to help
+                                },
+                                icon: const Icon(
+                                  Icons.help_outline,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                     
-                    // Edit Icon
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: GestureDetector(
-                        onTap: controller.pickImage,
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.2),
-                                blurRadius: 4,
+                    const SizedBox(height: 24),
+                    
+                    // User Info Card
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.3),
+                          width: 1,
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          // Profile Picture
+                          Stack(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(3),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: Colors.white,
+                                    width: 2,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withValues(alpha: 0.2),
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: CircleAvatar(
+                                  radius: 35,
+                                  backgroundColor: Colors.white,
+                                  backgroundImage: controller.user.value!.profilePictureUrl != null
+                                      ? NetworkImage(controller.user.value!.profilePictureUrl!)
+                                      : null,
+                                  child: controller.user.value!.profilePictureUrl == null
+                                      ? Text(
+                                          controller.user.value!.fullName[0].toUpperCase(),
+                                          style: const TextStyle(
+                                            fontSize: 28,
+                                            fontWeight: FontWeight.bold,
+                                            color: Color(0xFF6366F1),
+                                          ),
+                                        )
+                                      : null,
+                                ),
+                              ),
+                              
+                              // Camera Icon
+                              Positioned(
+                                bottom: 0,
+                                right: 0,
+                                child: GestureDetector(
+                                  onTap: controller.pickImage,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(6),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      shape: BoxShape.circle,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withValues(alpha: 0.2),
+                                          blurRadius: 4,
+                                        ),
+                                      ],
+                                    ),
+                                    child: const Icon(
+                                      Icons.camera_alt,
+                                      size: 14,
+                                      color: Color(0xFF6366F1),
+                                    ),
+                                  ),
+                                ),
                               ),
                             ],
                           ),
-                          child: const Icon(
-                            Icons.camera_alt,
-                            size: 18,
-                            color: Color(0xFF6366F1),
+                          
+                          const SizedBox(width: 16),
+                          
+                          // User Details
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Name with Verified Badge
+                                Row(
+                                  children: [
+                                    Flexible(
+                                      child: Text(
+                                        controller.user.value!.fullName,
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    if (controller.user.value!.isEmailVerified)
+                                      Container(
+                                        margin: const EdgeInsets.only(left: 6),
+                                        padding: const EdgeInsets.all(2),
+                                        decoration: const BoxDecoration(
+                                          color: Colors.blue,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: const Icon(
+                                          Icons.check,
+                                          size: 12,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                                
+                                const SizedBox(height: 4),
+                                
+                                // Email
+                                Text(
+                                  controller.user.value!.email,
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.white.withValues(alpha: 0.9),
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                
+                                const SizedBox(height: 8),
+                                
+                                // Status Chips
+                                Row(
+                                  children: [
+                                    // Traveler Status
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 4,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: controller.user.value!.isTravelerVerified
+                                            ? Colors.green.withValues(alpha: 0.3)
+                                            : Colors.orange.withValues(alpha: 0.3),
+                                        borderRadius: BorderRadius.circular(12),
+                                        border: Border.all(
+                                          color: controller.user.value!.isTravelerVerified
+                                              ? Colors.green
+                                              : Colors.orange,
+                                          width: 1,
+                                        ),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            controller.user.value!.isTravelerVerified
+                                                ? Icons.verified
+                                                : Icons.schedule,
+                                            size: 12,
+                                            color: Colors.white,
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            controller.user.value!.isTravelerVerified
+                                                ? 'Verified'
+                                                : 'Unverified',
+                                            style: const TextStyle(
+                                              fontSize: 11,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    
+                                    const SizedBox(width: 8),
+                                    
+                                    // Rating
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 4,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.amber.withValues(alpha: 0.3),
+                                        borderRadius: BorderRadius.circular(12),
+                                        border: Border.all(
+                                          color: Colors.amber,
+                                          width: 1,
+                                        ),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          const Icon(
+                                            Icons.star,
+                                            size: 12,
+                                            color: Colors.white,
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            '${controller.user.value!.averageRating}',
+                                            style: const TextStyle(
+                                              fontSize: 11,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
+                          
+                          // Edit Button
+                          Obx(() => Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.2),
+                              shape: BoxShape.circle,
+                            ),
+                            child: IconButton(
+                              onPressed: controller.toggleEdit,
+                              icon: Icon(
+                                controller.isEditing.value ? Icons.close : Icons.edit,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                            ),
+                          )),
+                        ],
                       ),
                     ),
                   ],
                 ),
-                
-                const SizedBox(height: 12),
-                
-                // Name
-                Text(
-                  controller.user.value!.fullName,
-                  style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                
-                const SizedBox(height: 4),
-                
-                // Email
-                Text(
-                  controller.user.value!.email,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.white.withValues(alpha: 0.9),
-                  ),
-                ),
-              ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
-      actions: [
-        Obx(() => IconButton(
-          onPressed: controller.toggleEdit,
-          icon: Icon(
-            controller.isEditing.value ? Icons.close : Icons.edit,
-            color: Colors.white,
-          ),
-        )),
-      ],
     );
   }
 
