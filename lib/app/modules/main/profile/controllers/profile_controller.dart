@@ -45,7 +45,7 @@ class ProfileController extends GetxController {
     if (user.value != null) {
       fullNameController.text = user.value!.fullName;
       emailController.text = user.value!.email;
-      phoneController.text = user.value!.phoneNumber ?? '';
+      phoneController.text = user.value!.phoneNumber;
       bioController.text = user.value!.bio ?? '';
       selectedGender.value = user.value!.gender ?? '';
     }
@@ -108,7 +108,7 @@ class ProfileController extends GetxController {
       
       if (image != null) {
         // TODO: Upload image to server
-        print('Image selected: ${image.path}');
+        // Image selected: ${image.path}
       }
     } catch (e) {
       Get.snackbar(

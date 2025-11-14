@@ -8,6 +8,7 @@ class UserModel {
   final String? bio;
   final double averageRating;
   final bool isTravelerVerified;
+  final bool isEmailVerified;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -21,6 +22,7 @@ class UserModel {
     this.bio,
     required this.averageRating,
     required this.isTravelerVerified,
+    required this.isEmailVerified,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -36,6 +38,7 @@ class UserModel {
       bio: json['bio'] as String?,
       averageRating: double.parse(json['averageRating'].toString()),
       isTravelerVerified: json['isTravelerVerified'] as bool,
+      isEmailVerified: json['isEmailVerified'] as bool? ?? false,
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
     );
@@ -52,6 +55,7 @@ class UserModel {
       'bio': bio,
       'averageRating': averageRating,
       'isTravelerVerified': isTravelerVerified,
+      'isEmailVerified': isEmailVerified,
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
     };

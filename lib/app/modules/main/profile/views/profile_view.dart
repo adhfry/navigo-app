@@ -19,7 +19,7 @@ class ProfileView extends GetView<ProfileController> {
             _buildHeader(context),
             
             // Profile Content
-            SliverToList(
+            SliverList(
               delegate: SliverChildListDelegate([
                 const SizedBox(height: 20),
                 
