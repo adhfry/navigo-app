@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:google_sign_in/google_sign_in.dart' as google;
+import 'package:google_sign_in/google_sign_in.dart';
 import '../../../../data/services/auth_service.dart';
 import '../../../../routes/app_pages.dart';
 
@@ -107,16 +108,12 @@ class RegisterController extends GetxController {
   // Register/Login dengan Google
   Future<void> registerWithGoogle() async {
     try {
-      final google.GoogleSignIn googleSignIn = google.GoogleSignIn(
-        scopes: <String>['email', 'profile'],
+      final googleSignIn = GoogleSignIn.instance;
+      await googleSignIn.initialize();
+      
+      final GoogleSignInAccount googleUser = await googleSignIn.authenticate(
+        scopeHint: ['email', 'profile'],
       );
-      
-      final google.GoogleSignInAccount? googleUser = await googleSignIn.signIn();
-      
-      // User cancelled the sign-in - silently return without error
-      if (googleUser == null) {
-        return;
-      }
       
       // Show loading dialog
       Get.dialog(
@@ -124,7 +121,7 @@ class RegisterController extends GetxController {
         barrierDismissible: false,
       );
       
-      final google.GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth = googleUser.authentication;
       
       if (googleAuth.idToken == null) {
         if (Get.isDialogOpen ?? false) Get.back();
@@ -180,7 +177,7 @@ class RegisterController extends GetxController {
           duration: const Duration(seconds: 3),
         );
       }
-    } on google.PlatformException catch (e) {
+    } on PlatformException catch (e) {
       // Handle Google Sign-In specific errors
       if (Get.isDialogOpen ?? false) Get.back();
       
