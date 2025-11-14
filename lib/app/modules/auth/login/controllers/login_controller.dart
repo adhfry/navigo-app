@@ -91,11 +91,18 @@ class LoginController extends GetxController {
       print('🔍 Starting Google Sign-In...');
       
       final googleSignIn = GoogleSignIn.instance;
-      await googleSignIn.initialize();
+      
+      // Initialize with Web Client ID for backend authentication
+      await googleSignIn.initialize(
+        serverClientId: '241902729566-e8ln8cggeivfmp4aogk3f1au4bhs7rlb.apps.googleusercontent.com',
+      );
+      
+      print('🔍 Google Sign-In initialized');
       
       // Attempt lightweight authentication first
       final lightweightAuth = googleSignIn.attemptLightweightAuthentication();
       if (lightweightAuth != null) {
+        print('🔍 Attempting lightweight authentication...');
         googleUser = await lightweightAuth;
       }
       
