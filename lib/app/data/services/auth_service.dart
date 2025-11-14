@@ -209,7 +209,7 @@ class AuthService extends GetxService {
       isLoading.value = true;
 
       final response = await _apiClient.post(
-        '/auth/forgot-password',
+        '/api/auth/forgot-password',
         data: {'email': email},
       );
 
@@ -259,7 +259,7 @@ class AuthService extends GetxService {
       isLoading.value = true;
 
       final response = await _apiClient.post(
-        '/auth/google',
+        '/api/auth/google',
         data: {'idToken': idToken},
       );
 
@@ -340,7 +340,7 @@ class AuthService extends GetxService {
       isLoading.value = true;
 
       final response = await _apiClient.post(
-        '/auth/google/complete-profile',
+        '/api/auth/google/complete-profile',
         data: {
           'phoneNumber': phoneNumber,
           'email': email,
