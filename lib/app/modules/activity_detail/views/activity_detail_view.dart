@@ -21,22 +21,12 @@ class ActivityDetailView extends GetView<ActivityDetailController> {
           slivers: [
             // App Bar
             SliverAppBar(
-              expandedHeight: 200,
+              expandedHeight: 110,
               floating: false,
               pinned: true,
               backgroundColor: const Color(0xFF0c4a6e),
-              leading: IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.white),
-                onPressed: () => Get.back(),
-              ),
+              automaticallyImplyLeading: false,
               flexibleSpace: FlexibleSpaceBar(
-                title: Text(
-                  type == 'BOOKING' ? 'Detail Tiket' : 'Detail Jastip',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
                 background: Stack(
                   children: [
                     Container(
@@ -53,10 +43,67 @@ class ActivityDetailView extends GetView<ActivityDetailController> {
                       ),
                     ),
                     Positioned(
-                      bottom: 20,
-                      left: 20,
-                      right: 20,
-                      child: _buildStatusBanner(data['status'] ?? 'PENDING'),
+                      top: -30,
+                      right: -40,
+                      child: Container(
+                        width: 150,
+                        height: 150,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: const Color(0xFFFFDE59).withValues(alpha: 0.08),
+                        ),
+                      ),
+                    ),
+                    SafeArea(
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.arrow_back, color: Colors.white),
+                              onPressed: () => Get.back(),
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                            ),
+                            const SizedBox(width: 12),
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Icon(
+                                type == 'BOOKING' ? Icons.receipt_long : Icons.local_shipping,
+                                color: const Color(0xFFFFDE59),
+                                size: 28,
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    type == 'BOOKING' ? 'Detail Tiket' : 'Detail Jastip',
+                                    style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  const SizedBox(height: 6),
+                                  _buildStatusBadge(data['status'] ?? 'PENDING'),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -68,8 +115,10 @@ class ActivityDetailView extends GetView<ActivityDetailController> {
               padding: const EdgeInsets.all(16),
               sliver: SliverList(
                 delegate: SliverChildListDelegate([
-                  if (type == 'BOOKING') ..._buildBookingContent(data)
-                  else ..._buildJastipContent(data),
+                  if (type == 'BOOKING')
+                    ..._buildBookingContent(data)
+                  else
+                    ..._buildJastipContent(data),
                   const SizedBox(height: 80),
                 ]),
               ),
@@ -81,66 +130,46 @@ class ActivityDetailView extends GetView<ActivityDetailController> {
     );
   }
 
-  Widget _buildStatusBanner(String status) {
+  Widget _buildStatusBadge(String status) {
     Color statusColor;
     String statusLabel;
-    IconData statusIcon;
 
     switch (status) {
       case 'CONFIRMED':
         statusColor = Colors.green;
-        statusLabel = 'Pesanan Dikonfirmasi';
-        statusIcon = Icons.check_circle;
+        statusLabel = 'Dikonfirmasi';
         break;
       case 'IN_TRANSIT':
         statusColor = Colors.blue;
-        statusLabel = 'Sedang Dalam Perjalanan';
-        statusIcon = Icons.local_shipping;
+        statusLabel = 'Dalam Perjalanan';
         break;
       case 'COMPLETED':
         statusColor = Colors.grey;
-        statusLabel = 'Pesanan Selesai';
-        statusIcon = Icons.done_all;
+        statusLabel = 'Selesai';
         break;
       case 'CANCELLED':
         statusColor = Colors.red;
-        statusLabel = 'Pesanan Dibatalkan';
-        statusIcon = Icons.cancel;
+        statusLabel = 'Dibatalkan';
         break;
       default:
         statusColor = Colors.orange;
         statusLabel = 'Menunggu Pembayaran';
-        statusIcon = Icons.schedule;
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: statusColor,
+        color: statusColor.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        border: Border.all(color: statusColor, width: 1.5),
       ),
-      child: Row(
-        children: [
-          Icon(statusIcon, color: Colors.white, size: 24),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              statusLabel,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-              ),
-            ),
-          ),
-        ],
+      child: Text(
+        statusLabel,
+        style: TextStyle(
+          color: statusColor,
+          fontWeight: FontWeight.bold,
+          fontSize: 12,
+        ),
       ),
     );
   }
@@ -151,9 +180,15 @@ class ActivityDetailView extends GetView<ActivityDetailController> {
         title: 'Informasi Tiket',
         icon: Icons.directions_boat,
         children: [
-          _buildInfoRow('Nama Kapal', data['subtitle'] ?? 'KM. Dharma Kartika III'),
+          _buildInfoRow(
+            'Nama Kapal',
+            data['subtitle'] ?? 'KM. Dharma Kartika III',
+          ),
           _buildInfoRow('Rute', '${data['title'] ?? 'Sumenep - Kangean'}'),
-          _buildInfoRow('Tanggal Keberangkatan', data['date'] ?? 'Hari ini, 14:30'),
+          _buildInfoRow(
+            'Tanggal Keberangkatan',
+            data['date'] ?? 'Hari ini, 14:30',
+          ),
           _buildInfoRow('Kelas', 'Ekonomi'),
           _buildInfoRow('Jumlah Penumpang', '2 Orang'),
         ],
@@ -175,7 +210,10 @@ class ActivityDetailView extends GetView<ActivityDetailController> {
         title: 'Detail Pembayaran',
         icon: Icons.payment,
         children: [
-          _buildInfoRow('Harga Tiket', 'Rp ${_formatCurrency(data['amount'] ?? 75000)}'),
+          _buildInfoRow(
+            'Harga Tiket',
+            'Rp ${_formatCurrency(data['amount'] ?? 75000)}',
+          ),
           _buildInfoRow('Biaya Admin', 'Rp 2.500'),
           const Divider(),
           _buildInfoRow(
@@ -226,7 +264,10 @@ class ActivityDetailView extends GetView<ActivityDetailController> {
         title: 'Detail Pembayaran',
         icon: Icons.payment,
         children: [
-          _buildInfoRow('Biaya Jastip', 'Rp ${_formatCurrency(data['amount'] ?? 50000)}'),
+          _buildInfoRow(
+            'Biaya Jastip',
+            'Rp ${_formatCurrency(data['amount'] ?? 50000)}',
+          ),
           _buildInfoRow('Biaya Admin', 'Rp 1.500'),
           const Divider(),
           _buildInfoRow(
@@ -306,10 +347,7 @@ class ActivityDetailView extends GetView<ActivityDetailController> {
             flex: 2,
             child: Text(
               label,
-              style: TextStyle(
-                fontSize: 13,
-                color: Colors.grey.shade600,
-              ),
+              style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
             ),
           ),
           Expanded(
@@ -355,7 +393,10 @@ class ActivityDetailView extends GetView<ActivityDetailController> {
                   colorText: const Color(0xFF0c4a6e),
                   margin: const EdgeInsets.all(16),
                   borderRadius: 12,
-                  icon: const Icon(Icons.support_agent, color: Color(0xFF0c4a6e)),
+                  icon: const Icon(
+                    Icons.support_agent,
+                    color: Color(0xFF0c4a6e),
+                  ),
                 );
               },
               icon: const Icon(Icons.help_outline),

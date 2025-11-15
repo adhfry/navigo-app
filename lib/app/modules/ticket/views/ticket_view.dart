@@ -102,7 +102,7 @@ class TicketView extends GetView<TicketController> {
             ),
             SafeArea(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(60, 20, 20, 20),
+                padding: const EdgeInsets.fromLTRB(20, 60, 20, 20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -340,7 +340,10 @@ class TicketView extends GetView<TicketController> {
               hintText: hint,
               hintStyle: TextStyle(color: Colors.grey.shade400),
               prefixIcon: Icon(icon, color: const Color(0xFF0c4a6e)),
-              suffixIcon: const Icon(Icons.arrow_drop_down, color: Color(0xFF0c4a6e)),
+              suffixIcon: const Icon(
+                Icons.arrow_drop_down,
+                color: Color(0xFF0c4a6e),
+              ),
               border: InputBorder.none,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,
@@ -353,17 +356,14 @@ class TicketView extends GetView<TicketController> {
           if (!showSuggestions.value || suggestions.isEmpty) {
             return const SizedBox.shrink();
           }
-          
+
           return Container(
             margin: const EdgeInsets.only(top: 8),
             constraints: const BoxConstraints(maxHeight: 200),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: Colors.grey.shade200,
-                width: 1,
-              ),
+              border: Border.all(color: Colors.grey.shade200, width: 1),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.1),

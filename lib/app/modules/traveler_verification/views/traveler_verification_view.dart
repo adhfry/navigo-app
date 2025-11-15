@@ -38,7 +38,7 @@ class TravelerVerificationView extends GetView<TravelerVerificationController> {
     return SliverAppBar(
       expandedHeight: 200,
       floating: false,
-      pinned: true,
+      pinned: false,
       backgroundColor: const Color(0xFF0c4a6e),
       leading: IconButton(
         icon: const Icon(Icons.arrow_back, color: Colors.white),
@@ -57,11 +57,11 @@ class TravelerVerificationView extends GetView<TravelerVerificationController> {
               ),
             ),
             Positioned(
-              top: -80,
-              right: -80,
+              top: -50,
+              right: -50,
               child: Container(
-                width: 250,
-                height: 250,
+                width: 200,
+                height: 200,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: const Color(0xFFFFDE59).withValues(alpha: 0.1),
@@ -76,7 +76,10 @@ class TravelerVerificationView extends GetView<TravelerVerificationController> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
                         color: const Color(0xFFFFDE59).withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(20),
@@ -85,16 +88,40 @@ class TravelerVerificationView extends GetView<TravelerVerificationController> {
                       child: const Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.check_circle, size: 16, color: Color(0xFFFFDE59)),
+                          Icon(
+                            Icons.verified,
+                            size: 16,
+                            color: Color(0xFFFFDE59),
+                          ),
                           SizedBox(width: 6),
-                          Text('Verifikasi', style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600)),
+                          Text(
+                            'Jadi Traveler Terverifikasi',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         ],
                       ),
                     ),
                     const SizedBox(height: 12),
-                    const Text('Jadi Traveler', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white)),
+                    const Text(
+                      'Verifikasi Traveler',
+                      style: TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
                     const SizedBox(height: 4),
-                    Text('Dapatkan kepercayaan lebih dari pengguna', style: TextStyle(fontSize: 14, color: Colors.white.withValues(alpha: 0.9))),
+                    Text(
+                      'Jadi traveler yang terpercaya dengan verifikasi lengkap',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.white.withValues(alpha: 0.9),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -126,16 +153,30 @@ class TravelerVerificationView extends GetView<TravelerVerificationController> {
               color: Color(0xFFFFDE59),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.workspace_premium, size: 32, color: Color(0xFF0c4a6e)),
+            child: const Icon(
+              Icons.workspace_premium,
+              size: 32,
+              color: Color(0xFF0c4a6e),
+            ),
           ),
           const SizedBox(width: 16),
           const Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Tingkatkan Kredibilitas', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF0c4a6e))),
+                Text(
+                  'Tingkatkan Kredibilitas',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF0c4a6e),
+                  ),
+                ),
                 SizedBox(height: 4),
-                Text('Dapatkan badge verifikasi dan kepercayaan lebih', style: TextStyle(fontSize: 13, color: Color(0xFF0c4a6e))),
+                Text(
+                  'Dapatkan badge verifikasi dan kepercayaan lebih',
+                  style: TextStyle(fontSize: 13, color: Color(0xFF0c4a6e)),
+                ),
               ],
             ),
           ),
@@ -148,37 +189,62 @@ class TravelerVerificationView extends GetView<TravelerVerificationController> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Keuntungan', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF0c4a6e))),
+        const Text(
+          'Keuntungan',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF0c4a6e),
+          ),
+        ),
         const SizedBox(height: 16),
-        Obx(() => Column(
-          children: controller.benefits.map((benefit) {
-            return Container(
-              margin: const EdgeInsets.only(bottom: 12),
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, 4))],
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.green.withValues(alpha: 0.1),
-                      shape: BoxShape.circle,
+        Obx(
+          () => Column(
+            children: controller.benefits.map((benefit) {
+              return Container(
+                margin: const EdgeInsets.only(bottom: 12),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
                     ),
-                    child: const Icon(Icons.check_circle, color: Colors.green, size: 20),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Text(benefit, style: TextStyle(fontSize: 14, color: Colors.grey.shade700)),
-                  ),
-                ],
-              ),
-            );
-          }).toList(),
-        )),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.green.withValues(alpha: 0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.check_circle,
+                        color: Colors.green,
+                        size: 20,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Text(
+                        benefit,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+          ),
+        ),
       ],
     );
   }
@@ -187,37 +253,62 @@ class TravelerVerificationView extends GetView<TravelerVerificationController> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Persyaratan', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF0c4a6e))),
+        const Text(
+          'Persyaratan',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF0c4a6e),
+          ),
+        ),
         const SizedBox(height: 16),
-        Obx(() => Column(
-          children: controller.requirements.map((req) {
-            return Container(
-              margin: const EdgeInsets.only(bottom: 12),
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, 4))],
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF0c4a6e).withValues(alpha: 0.1),
-                      shape: BoxShape.circle,
+        Obx(
+          () => Column(
+            children: controller.requirements.map((req) {
+              return Container(
+                margin: const EdgeInsets.only(bottom: 12),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
                     ),
-                    child: const Icon(Icons.assignment_turned_in, color: Color(0xFF0c4a6e), size: 20),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Text(req, style: TextStyle(fontSize: 14, color: Colors.grey.shade700)),
-                  ),
-                ],
-              ),
-            );
-          }).toList(),
-        )),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF0c4a6e).withValues(alpha: 0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.assignment_turned_in,
+                        color: Color(0xFF0c4a6e),
+                        size: 20,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Text(
+                        req,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+          ),
+        ),
       ],
     );
   }
@@ -228,14 +319,34 @@ class TravelerVerificationView extends GetView<TravelerVerificationController> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.08), blurRadius: 15, offset: const Offset(0, 8))],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Ajukan Verifikasi', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF0c4a6e))),
+          const Text(
+            'Ajukan Verifikasi',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF0c4a6e),
+            ),
+          ),
           const SizedBox(height: 16),
-          Text('Catatan Tambahan', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.grey.shade700)),
+          Text(
+            'Catatan Tambahan',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey.shade700,
+            ),
+          ),
           const SizedBox(height: 8),
           TextField(
             controller: controller.notesController,
@@ -255,39 +366,57 @@ class TravelerVerificationView extends GetView<TravelerVerificationController> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: Color(0xFF0c4a6e), width: 2),
+                borderSide: const BorderSide(
+                  color: Color(0xFF0c4a6e),
+                  width: 2,
+                ),
               ),
             ),
           ),
           const SizedBox(height: 24),
-          Obx(() => SizedBox(
-            width: double.infinity,
-            height: 56,
-            child: ElevatedButton(
-              onPressed: controller.isSubmitting.value ? null : controller.submitVerification,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF0c4a6e),
-                foregroundColor: Colors.white,
-                disabledBackgroundColor: Colors.grey.shade300,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                elevation: 0,
-              ),
-              child: controller.isSubmitting.value
-                ? const SizedBox(
-                  width: 24,
-                  height: 24,
-                  child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                )
-                : const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.send, size: 20),
-                    SizedBox(width: 12),
-                    Text('Ajukan Verifikasi', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                  ],
+          Obx(
+            () => SizedBox(
+              width: double.infinity,
+              height: 56,
+              child: ElevatedButton(
+                onPressed: controller.isSubmitting.value
+                    ? null
+                    : controller.submitVerification,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF0c4a6e),
+                  foregroundColor: Colors.white,
+                  disabledBackgroundColor: Colors.grey.shade300,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  elevation: 0,
                 ),
+                child: controller.isSubmitting.value
+                    ? const SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
+                      )
+                    : const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.send, size: 20),
+                          SizedBox(width: 12),
+                          Text(
+                            'Ajukan Verifikasi',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+              ),
             ),
-          )),
+          ),
         ],
       ),
     );

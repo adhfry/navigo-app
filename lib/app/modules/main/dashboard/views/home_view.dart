@@ -811,7 +811,7 @@ class HomeView extends GetView<DashboardController> {
                 onPressed: () => Get.toNamed('/jastip'),
                 style: TextButton.styleFrom(
                   foregroundColor: const Color(0xFF0c4a6e),
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
@@ -822,11 +822,11 @@ class HomeView extends GetView<DashboardController> {
                       'Lihat Semua',
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
-                        fontSize: 13,
+                        fontSize: 12,
                       ),
                     ),
-                    SizedBox(width: 4),
-                    Icon(Icons.arrow_forward_ios, size: 11),
+                    SizedBox(width: 2),
+                    Icon(Icons.arrow_forward_ios, size: 10),
                   ],
                 ),
               ),

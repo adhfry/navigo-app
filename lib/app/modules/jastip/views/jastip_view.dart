@@ -77,7 +77,7 @@ class JastipView extends GetView<JastipController> {
             ),
             SafeArea(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(60, 20, 20, 20),
+                padding: const EdgeInsets.fromLTRB(20, 60, 20, 20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -258,7 +258,7 @@ class JastipView extends GetView<JastipController> {
     if (jastip == null) {
       return const SizedBox.shrink();
     }
-    
+
     final requester = jastip['requester'] as Map<String, dynamic>? ?? {};
     final reward = (jastip['rewardAmount'] as num?)?.toDouble() ?? 0.0;
     final createdAt = jastip['createdAt'] as DateTime? ?? DateTime.now();
