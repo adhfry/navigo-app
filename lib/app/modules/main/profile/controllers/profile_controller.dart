@@ -17,6 +17,7 @@ class ProfileController extends GetxController {
   final selectedGender = ''.obs;
   final isLoading = false.obs;
   final isEditing = false.obs;
+  final isGoogleConnected = false.obs;
   
   Rx<UserModel?> user = Rx<UserModel?>(null);
   
@@ -48,6 +49,15 @@ class ProfileController extends GetxController {
       phoneController.text = user.value!.phoneNumber;
       bioController.text = user.value!.bio ?? '';
       selectedGender.value = user.value!.gender ?? '';
+      
+      // Check if Google is connected
+      // User yang login via Google memiliki profile picture dari googleusercontent
+      // atau email verified otomatis (karena Google sudah verify)
+      isGoogleConnected.value = (user.value!.profilePictureUrl != null &&
+          user.value!.profilePictureUrl!.contains('googleusercontent'));
+      
+      print('🔍 Google Connected Status: ${isGoogleConnected.value}');
+      print('🔍 Profile Picture URL: ${user.value!.profilePictureUrl}');
     }
   }
   
@@ -62,35 +72,64 @@ class ProfileController extends GetxController {
   Future<void> updateProfile() async {
     if (!formKey.currentState!.validate()) return;
     
+    // Validate gender
+    if (selectedGender.value.isEmpty) {
+      Get.snackbar(
+        'Error',
+        'Pilih jenis kelamin terlebih dahulu',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        margin: const EdgeInsets.all(16),
+        borderRadius: 12,
+      );
+      return;
+    }
+    
     try {
       isLoading.value = true;
       
-      // TODO: Call API to update profile
-      // final response = await _authService.updateProfile(
-      //   fullName: fullNameController.text,
-      //   phoneNumber: phoneController.text,
-      //   gender: selectedGender.value,
-      //   bio: bioController.text,
-      // );
-      
-      Get.snackbar(
-        'Berhasil',
-        'Profile berhasil diupdate',
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
+      // Call API to update profile
+      final response = await _authService.updateProfile(
+        fullName: fullNameController.text.trim(),
+        phoneNumber: phoneController.text.trim(),
+        gender: selectedGender.value,
+        bio: bioController.text.trim().isEmpty ? null : bioController.text.trim(),
       );
       
-      isEditing.value = false;
-      await _authService.getCurrentUser();
-      loadUserData();
+      if (response.isSuccess) {
+        Get.snackbar(
+          'Berhasil',
+          response.message ?? 'Profile berhasil diupdate',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+          margin: const EdgeInsets.all(16),
+          borderRadius: 12,
+        );
+        
+        isEditing.value = false;
+        loadUserData();
+      } else {
+        Get.snackbar(
+          'Error',
+          response.message ?? 'Gagal update profile',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          margin: const EdgeInsets.all(16),
+          borderRadius: 12,
+        );
+      }
     } catch (e) {
       Get.snackbar(
         'Error',
         'Gagal update profile: ${e.toString()}',
-        snackPosition: SnackPosition.TOP,
+        snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: Colors.white,
+        margin: const EdgeInsets.all(16),
+        borderRadius: 12,
       );
     } finally {
       isLoading.value = false;

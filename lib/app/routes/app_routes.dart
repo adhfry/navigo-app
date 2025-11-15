@@ -9,9 +9,18 @@ abstract class Routes {
   static const login = _Paths.login;
   static const dashboard = _Paths.dashboard;
   static const scheduleSearch = _Paths.scheduleSearch;
+  static const scheduleDetail = _Paths.scheduleDetail;
+  static const ticket = _Paths.ticket;
+  static const jastip = _Paths.jastip;
+  static const navisafe = _Paths.navisafe;
+  static const travelerVerification = _Paths.travelerVerification;
   static const forgotPassword = _Paths.forgotPassword;
   static const completeProfile = _Paths.completeProfile;
   static const profile = _Paths.profile;
+  static const notifications = _Paths.notifications;
+  static const help = _Paths.help;
+  static const activityDetail = _Paths.activityDetail;
+  static const chat = _Paths.chat;
   
   // Backward compatibility
   // ignore: constant_identifier_names
@@ -42,7 +51,16 @@ abstract class _Paths {
   static const login = '/login';
   static const dashboard = '/dashboard';
   static const scheduleSearch = '/schedule-search';
+  static const scheduleDetail = '/schedule-detail';
+  static const ticket = '/ticket';
+  static const jastip = '/jastip';
+  static const navisafe = '/navisafe';
+  static const travelerVerification = '/traveler-verification';
   static const forgotPassword = '/forgot-password';
   static const completeProfile = '/complete-profile';
   static const profile = '/profile';
+  static const notifications = '/notifications';
+  static const help = '/help';
+  static const activityDetail = '/activity-detail';
+  static const chat = '/chat';
 }

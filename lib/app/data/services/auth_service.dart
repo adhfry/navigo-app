@@ -196,6 +196,66 @@ class AuthService extends GetxService {
     }
   }
 
+  // Update Profile
+  Future<ApiResponse<UserModel>> updateProfile({
+    required String fullName,
+    required String phoneNumber,
+    required String gender,
+    String? bio,
+  }) async {
+    try {
+      isLoading.value = true;
+
+      // Endpoint: /api/users/me with PUT method (as per backend controller)
+      final response = await _apiClient.put(
+        '/api/users/me',
+        data: {
+          'fullName': fullName, // camelCase as per UpdateProfileDto
+          'phoneNumber': phoneNumber, // camelCase as per UpdateProfileDto
+          'gender': gender,
+          if (bio != null && bio.isNotEmpty) 'bio': bio,
+        },
+      );
+
+      final apiResponse = ApiResponse<UserModel>.fromJson(
+        response.data as Map<String, dynamic>,
+        (json) => UserModel.fromJson(json as Map<String, dynamic>),
+      );
+
+      if (apiResponse.isSuccess && apiResponse.data != null) {
+        currentUser.value = apiResponse.data;
+      }
+
+      return apiResponse;
+    } on DioException catch (e) {
+      dev.log('Update profile failed', name: 'AuthService', error: e);
+      if (e.response?.data != null) {
+        final errorData = e.response!.data;
+        return ApiResponse<UserModel>(
+          status: 'error',
+          message: errorData is Map<String, dynamic>
+              ? (errorData['message'] as String? ?? 'Gagal update profile')
+              : 'Gagal update profile',
+        );
+      }
+      return ApiResponse<UserModel>(
+        status: 'error',
+        message: e.type == DioExceptionType.connectionTimeout ||
+                e.type == DioExceptionType.receiveTimeout
+            ? 'Koneksi timeout, periksa jaringan Anda'
+            : 'Terjadi kesalahan koneksi',
+      );
+    } catch (e) {
+      dev.log('Unexpected error updating profile', name: 'AuthService', error: e);
+      return ApiResponse<UserModel>(
+        status: 'error',
+        message: 'Terjadi kesalahan yang tidak diketahui',
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   // Logout
   Future<void> logout() async {
     await clearToken();

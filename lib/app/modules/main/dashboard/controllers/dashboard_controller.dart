@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 // REVISI: Menambahkan import untuk semua halaman/view
 import 'package:navi_go/app/modules/main/dashboard/views/home_view.dart';
 import 'package:navi_go/app/modules/main/dashboard/views/activity_view.dart';
 import 'package:navi_go/app/modules/main/dashboard/views/message_view.dart';
 import 'package:navi_go/app/modules/main/profile/views/profile_view.dart';
+import 'package:navi_go/app/data/services/auth_service.dart';
+import 'package:navi_go/app/modules/main/dashboard/controllers/message_controller.dart';
 
 class DashboardController extends GetxController {
   // REVISI: Menambahkan state untuk BottomNavigationBar
@@ -16,7 +17,7 @@ class DashboardController extends GetxController {
   final RxInt currentCarouselPage = 0.obs;
   
   // User name for header
-  final RxString userName = 'Guest'.obs;
+  final RxString userName = 'Traveler'.obs;
 
   // REVISI: Mengisi daftar halaman (pages) yang hilang
   final List<Widget> pages = [
@@ -32,18 +33,35 @@ class DashboardController extends GetxController {
     // REVISI: Menginisialisasi PageController
     pageController = PageController(initialPage: currentIndex.value);
     _loadUserName();
+    
+    // Initialize MessageController
+    Get.put(MessageController());
   }
   
-  // Load user name from storage
-  void _loadUserName() async {
+  // Load user name from AuthService
+  void _loadUserName() {
     try {
-      final storage = Get.find<GetStorage>();
-      final user = storage.read('user');
-      if (user != null && user['fullName'] != null) {
-        userName.value = user['fullName'];
+      final authService = Get.find<AuthService>();
+      
+      // Listen to currentUser changes
+      ever(authService.currentUser, (user) {
+        if (user != null && user.fullName.isNotEmpty) {
+          userName.value = user.fullName;
+          print('✅ User name updated: ${user.fullName}');
+        } else {
+          userName.value = 'Traveler';
+          print('⚠️ No user data, using Traveler');
+        }
+      });
+      
+      // Set initial value
+      if (authService.currentUser.value != null) {
+        userName.value = authService.currentUser.value!.fullName;
+        print('✅ Initial user name: ${authService.currentUser.value!.fullName}');
       }
     } catch (e) {
       userName.value = 'Traveler';
+      print('❌ Error loading user: $e');
     }
   }
 
